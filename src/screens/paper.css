@@ -1,0 +1,16 @@
+@import url("backdrop.css");
+.pp-sheet{padding:16px;display:grid;gap:12px;border-radius:18px;background:#1b2331;border:1px solid #3d475b;box-shadow:0 3px 0 #242d3c,0 6px 0 #161c28}
+.pp-mast{text-align:center;border-bottom:3px double #6a5f43;padding-bottom:6px}.pp-mast h1{font-family:ui-serif,'AppleMyungjo','Noto Serif KR',serif;color:#f0cd84;letter-spacing:.2em;font-size:1.5rem}.pp-mast p{margin:0;color:var(--ink2)}
+.pp-top h2{font-size:1.35rem;line-height:1.35;margin:2px 0}.pp-top .sub,.pp-sec .sub{color:var(--ink2)}
+.pp-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:0 8px;border:1px solid #eac47755;color:var(--gold);border-radius:8px}
+.pp-src{font-size:.72rem;color:var(--ink2);padding:4px 2px}
+.pp-sec{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:4px}.pp-sec h3{font-size:12.5px;color:var(--gold)}.pp-sec p{margin:0}
+.pp-list{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:.92rem}.pp-money li{display:flex;justify-content:space-between;gap:12px}.pp-money li span{min-width:0}.pp-money b{flex:none}
+.pp-plus{color:var(--leaf)}.pp-minus{color:var(--red)}
+.pp-market{margin:0;font-weight:700}.pp-daily{margin:0;font-style:italic;color:var(--ink2)}
+.pp-item p{margin:2px 0 0;font-size:.92rem}
+.pp-mem{background:#1c2637;border:1px solid #394861;padding:12px;border-radius:12px}.pp-mem p{color:#d4ddf1;line-height:1.8}
+.ye-sheet{gap:10px}.ye-net{margin:0;font-size:2rem;font-weight:800;line-height:1.2;color:#f0cd84}.ye .spark{color:var(--gold)}
+.ye-mix{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px}.ye-mix i{display:block;flex:1 1 0;min-width:3px}.ye-mix .m0{background:var(--gold)}.ye-mix .m1{background:var(--sky)}.ye-mix .m2{background:var(--leaf)}.ye-mix .m3{background:var(--sun)}.ye-mix .m4{background:var(--rose)}
+
+.pp-link{display:inline;padding:0;min-height:0;font:inherit;color:inherit;text-align:left;text-decoration:underline;background:none;border:0}

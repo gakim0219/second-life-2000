@@ -1,0 +1,74 @@
+/* 인물 시트, 사람들, 기억. */
+.nav-back{min-height:44px;min-width:44px;padding:0 13px;border-radius:22px;color:var(--gold);font-size:13px;font-weight:700;text-align:left;background:#202837;border:1px solid #4d4736;justify-self:start;width:fit-content}.nav-back.right{text-align:right}
+.face{position:relative;display:inline-grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 30%,#55617a,#2b3346);border:1px solid #6c6754;color:var(--gold)}
+.face b{font-size:.8rem;font-weight:700}.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.face.lg{width:48px;height:48px}.face.lg b{font-size:1.05rem}.face.new{border-style:dashed}
+.hearts{white-space:nowrap}
+
+.person{display:grid;gap:12px}
+.person-pic{position:relative;aspect-ratio:1/1;max-height:min(52vh,380px);width:100%;border-radius:20px;overflow:hidden;background:radial-gradient(circle at 50% 30%,#55617a,#2b3346 62%,#1c2330);border:1px solid #6c675450;display:grid;place-items:center}
+.person-pic .who-pic{position:absolute;inset:0}.person-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
+.person-pic b{font-size:4rem;color:var(--gold)}
+.person-card{margin-top:-34px;position:relative;z-index:1;margin-inline:8px;box-shadow:var(--shadow)}
+.person-head{gap:0}.person-stage{font-size:.86rem;font-weight:600;color:var(--ink2)}
+.person-card .hearts{font-size:1.1rem}
+.person-result{border-top:1px dashed var(--line2);padding-top:8px;color:#f1e3c4;animation:rise .24s ease-out both}
+
+.p-list{display:grid;gap:7px}.p-group{gap:8px;margin-top:6px}.p-group h2{color:var(--on2);font-size:13px;font-weight:650}
+.p-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.p-tile{display:block;padding:0;overflow:hidden;text-align:left;border-radius:16px;background:var(--panel);border:1px solid var(--line);transition:border-color .15s,transform .08s}.p-tile:hover{border-color:#646d7e}.p-tile:active{transform:translateY(1px)}
+.p-pic{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1;background:radial-gradient(circle at 50% 30%,#55617a,#2b3346 62%,#1c2330)}.p-pic>b{font-size:28px;color:var(--gold)}.p-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%}.p-pic .who-pic{position:absolute;inset:0}
+.p-info{display:block;padding:10px 11px 11px}.p-info small{display:block;font-size:10.5px;color:var(--on2);min-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.p-info>b{display:block;font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-rel{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:5px;min-width:0}.p-rel .hearts{font-size:11px;flex:none}.p-rel em{font-style:normal;font-size:10.5px;color:var(--on2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-link{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:56px;text-align:left;border-radius:13px;border:1px solid #71634870;background:linear-gradient(110deg,#3d332a70,#202634)}.p-link>.icon{color:var(--gold)}.p-link>span{flex:1;min-width:0}.p-link small{display:block;font-size:10.5px;color:#c5b797}.p-link b{display:block;font-size:13px;font-weight:600}.p-link em{font-style:normal;color:var(--gold);font-size:18px}
+.p-main{display:grid;flex:1;min-width:0}.p-main>*{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.a-row{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;padding:9px 12px;text-align:left;background:#1c2432;border:1px solid var(--line);border-radius:12px}.a-dot{flex:none;width:12px;height:12px;margin:0 4px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #eac47733}.a-clip{white-space:nowrap}
+.album-text{white-space:pre-wrap;line-height:1.8}
+.ms{display:flex;gap:8px;align-items:center;min-height:52px;padding:8px 10px;border-radius:12px;border:1px dashed var(--line2);color:var(--on2);font-size:.88rem;overflow-wrap:anywhere}
+.ms.on{background:#eac47714;color:var(--ink);border:1px solid #eac47766;font-weight:600}.ms.on b{color:var(--leaf)}.ms b{flex:none}
+.goal{gap:6px}.meter{height:5px;border-radius:20px;background:#353d4b;overflow:hidden}.meter i{display:block;height:100%;background:var(--gold)}
+.scrap h3{color:var(--gold);margin-bottom:4px}.scrap ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.92rem}.scrap li{overflow-wrap:anywhere}.scrap .era{color:var(--ink2)}
+.person-actions .btn{display:grid;justify-items:center}
+
+.person-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; }
+.person-title h1 { min-width: 0; }
+.person-name { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
+.person-fullbtn:disabled { color: var(--sub, #9aa3b5); opacity: .55; cursor: not-allowed; }
+.person-admin { margin: 0; font-size: 12px; color: var(--gold); letter-spacing: .3px; }
+.person-fullbtn { flex: none; min-height: 36px; padding: 0 12px; border-radius: 999px; font-size: .8rem; font-weight: 600; color: var(--gold); background: #ffffff0f; border: 1px solid #ffffff2e; }
+.person-full { display: flex; justify-content: center; }
+.person-full img { max-width: 100%; max-height: 70vh; height: auto; object-fit: contain; border-radius: 12px; }
+
+.p-mem{margin:0;padding-left:0;list-style:none;display:grid;gap:8px}.p-mem li{padding-left:12px;border-left:2px solid #809ad0;font-size:13.5px;line-height:1.8;color:#d4ddf1;word-break:keep-all}
+.person-away{padding:10px 14px;border-radius:14px;background:#ffffff0a;border:1px solid #ffffff1c;line-height:1.5}
+
+/* 사람들 목록: 한 줄에 한 사람(사진 · 관계 · 이름 · 사이) */
+.p-row{width:100%;display:grid;grid-template-columns:48px minmax(56px,84px) minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 12px 7px 8px;min-height:62px;text-align:left;border-radius:14px;background:var(--panel);border:1px solid var(--line);transition:border-color .15s}.p-row:hover{border-color:#646d7e}.p-row:active{transform:translateY(1px)}
+.p-row .p-tag{font-size:11px;color:var(--on2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-row .p-name{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-row .p-bond{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:0}.p-row .p-bond .hearts{font-size:11px}.p-row .p-bond em{font-style:normal;font-size:10.5px;color:var(--on2);white-space:nowrap}
+/* 맨 위 연락 창 버튼 */
+.p-contact{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;min-height:62px;text-align:left;border-radius:15px;border:1px solid #5d7fa880;background:linear-gradient(110deg,#25364d,#1d2432)}.p-contact>.icon{color:#9cc6ff;width:26px;height:26px}.p-contact>span:not(.chip){flex:1;min-width:0;text-align:left}.p-contact small{display:block;font-size:11px;color:#a9bdd6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.p-contact b{display:block;font-size:15px;font-weight:650}.p-contact em{font-style:normal;color:#9cc6ff;font-size:20px}
+.face .who-pic{position:absolute;inset:0}
+/* 회귀노트 */
+.rn-row{gap:8px;align-items:stretch}.rn-row .p-link{flex:1}
+.rn-btn{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 12px;min-width:72px;border-radius:13px;border:1px solid #71634870;background:#262c39;color:#f1e3c4;font-size:11.5px;font-weight:650}.rn-btn>.icon{color:var(--gold)}
+.rn-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.rn-list li{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:11px;background:#f4ecd8;color:#2b2418;border:1px solid #d9cba8}.rn-list li>b{font-size:13px;color:#7a5a1c}
+.rn-list li.empty{background:#3a3428;color:#b9ab8a;border-color:#4e4636}
+.rn-pair{display:grid;gap:3px;min-width:0}.rn-pair>span{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:6px;align-items:baseline}
+.rn-pair small{font-size:10.5px;color:#8a7650}.rn-pair em{font-style:normal;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rn-pair i{font-style:normal;font-size:12px;font-weight:700;color:#b23a2a}
+
+/* 어른 상세: 알게 된 정도와 인연 줄 */
+.prof-steps { display: flex; gap: 4px; }
+.prof-steps i { flex: 1; height: 4px; border-radius: 2px; background: #ffffff1f; }
+.prof-steps i.on { background: var(--gold); }
+.prof-link { display: inline; padding: 0; min-height: 0; background: none; border: 0; color: var(--on); text-align: left; font: inherit; }
+.prof-link:not(:disabled) b { text-decoration: underline; text-underline-offset: 3px; }
+.prof-link:disabled { opacity: 1; cursor: default; }
+.prof-link-text { display: block; color: var(--sub, #9aa3b5); font-size: .86rem; }
+
+/* 회귀노트 반년 표 */
+.rn-half li{grid-template-columns:1fr;gap:6px;align-items:start}.rn-half li>b{font-size:13.5px}
+.rn-pair>.rn-cap{display:block;grid-template-columns:none;margin-top:4px;font-size:11px;font-weight:700;color:#7a5a1c;border-top:1px dashed #d9cba8;padding-top:5px}.rn-pair>.rn-cap:first-child{margin-top:0;border-top:0;padding-top:0}

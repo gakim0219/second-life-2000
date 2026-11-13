@@ -1,0 +1,45 @@
+/* 연락 창. 앱마다 색과 모양만 바꾼다(로고·상표 그림 없음). 앱 색은 --mz-* 토큰으로 둔다. */
+.nav-back{min-height:44px;min-width:44px;padding:0 13px;border-radius:22px;color:var(--gold);font-size:13px;font-weight:700;text-align:left;background:#202837;border:1px solid #4d4736;justify-self:start;width:fit-content}
+.face{position:relative;display:inline-grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 30%,#55617a,#2b3346);border:1px solid var(--line2)}
+.face b{font-size:.8rem;font-weight:700}.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.face.lg{width:44px;height:44px}.face.lg b{font-size:1rem}
+.hearts{white-space:nowrap;font-size:11px;color:var(--rose)}
+
+.mz{--mz-bg:#18202c;--mz-bar:#232c3b;--mz-ink:var(--on);--mz-me:#2f3b52;--mz-me-ink:var(--on);--mz-them:#232c3b;--mz-them-ink:var(--on);--mz-accent:var(--gold);--mz-r:16px}
+/* 2000년대 초 PC 대화창: 푸른 창틀, 각진 모서리 */
+.mz-buddy{--mz-bg:#eef3fb;--mz-bar:linear-gradient(180deg,#5d86c9,#3d63a8);--mz-ink:#1c2740;--mz-me:#fff5c2;--mz-me-ink:#3a3010;--mz-them:#ffffff;--mz-them-ink:#1c2740;--mz-accent:#f2c94c;--mz-r:4px}
+/* 미니홈피: 주황 테두리, 공책 같은 흰 바탕 */
+.mz-cy{--mz-bg:#fbf7f0;--mz-bar:#f08a3e;--mz-ink:#3b2f22;--mz-me:#fff;--mz-me-ink:#3b2f22;--mz-them:#fde9d6;--mz-them-ink:#3b2f22;--mz-accent:#f08a3e;--mz-r:6px}
+/* 폴더폰 문자: 녹색 액정, 도트 느낌 */
+.mz-sms{--mz-bg:#b9caa0;--mz-bar:#2f3a2a;--mz-ink:#1f2a19;--mz-me:#a3b78a;--mz-me-ink:#1f2a19;--mz-them:#cfdcb9;--mz-them-ink:#1f2a19;--mz-accent:#2f3a2a;--mz-r:2px}
+/* 2010년대 말풍선: 노란 내 말풍선, 하늘빛 바탕 */
+.mz-kakao{--mz-bg:#b7c9d8;--mz-bar:#9fb3c4;--mz-ink:#1d232b;--mz-me:#fbe54d;--mz-me-ink:#2b2610;--mz-them:#ffffff;--mz-them-ink:#1d232b;--mz-accent:#f0d43a;--mz-r:14px}
+/* 사진 앱 DM: 흰 바탕, 보라·분홍 그라데이션 내 말풍선 */
+.mz-insta{--mz-bg:#ffffff;--mz-bar:#fafafa;--mz-ink:#1c1c1c;--mz-me:linear-gradient(120deg,#8a5cf6,#e0538f);--mz-me-ink:#fff;--mz-them:#efefef;--mz-them-ink:#1c1c1c;--mz-accent:#e0538f;--mz-r:20px}
+
+.mz-frame{background:var(--mz-bg);color:var(--mz-ink);border-radius:calc(var(--mz-r) + 6px);overflow:hidden;border:1px solid var(--line2);box-shadow:var(--shadow)}
+.mz-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--mz-bar);color:#fff;min-height:48px}
+.mz-kakao .mz-bar,.mz-insta .mz-bar{color:var(--mz-ink)}.mz-insta .mz-bar{border-bottom:1px solid #e3e3e3}
+.mz-sms .mz-bar{color:#cfe0b4;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+.mz-app{margin-left:auto;font-size:12px;font-weight:700;opacity:.9}.mz-count{font-size:12px;opacity:.8}
+.mz-who{font-size:14px}
+.mz-list{display:flex;flex-direction:column}
+.mz-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 14px;text-align:left;color:var(--mz-ink);min-height:64px;border-bottom:1px solid #00000014;width:100%}
+.mz-row:hover{background:#00000008}
+.mz-row-main{min-width:0;display:flex;flex-direction:column;gap:2px}
+.mz-row-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mz-row-top b{font-size:14px}
+.mz-row-last{font-size:12.5px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mz-row-at{font-size:11px;opacity:.6;align-self:start;padding-top:4px}
+.mz-tag{font-style:normal;font-size:10.5px;padding:1px 7px;border-radius:10px;background:#00000014}.mz-tag.far{background:#c0392b22;color:#a5342a}.mz-tag.done{background:#2e7d3222;color:#2e6b31}
+.mz-sms .mz-row,.mz-sms .mz-bubble,.mz-sms .mz-empty{font-family:ui-monospace,Menlo,monospace}
+.mz-empty{padding:18px 14px;font-size:13px;opacity:.75;margin:0}
+.mz-msgs{display:flex;flex-direction:column;gap:8px;padding:14px;min-height:160px;max-height:52vh;overflow-y:auto}
+.mz-msg{display:flex;flex-direction:column;max-width:82%}
+.mz-msg.me{align-self:flex-end;align-items:flex-end}.mz-msg.them{align-self:flex-start;align-items:flex-start}
+.mz-bubble{padding:8px 12px;border-radius:var(--mz-r);font-size:13.5px;line-height:1.5;white-space:pre-wrap}
+.mz-msg.me .mz-bubble{background:var(--mz-me);color:var(--mz-me-ink)}.mz-msg.them .mz-bubble{background:var(--mz-them);color:var(--mz-them-ink)}
+.mz-buddy .mz-bubble{border:1px solid #9bb3d9}.mz-cy .mz-bubble{border:1px dashed #e7b48a}
+.mz-meta{font-size:10.5px;opacity:.6;margin-top:2px}
+.mz-bytes{margin:0;padding:0 14px 6px;text-align:right;font-size:11px;font-family:ui-monospace,Menlo,monospace;opacity:.7}
+.mz-acts{display:grid;gap:8px;padding:12px 14px 14px;background:#00000010}
+.mz-acts .btn{color:var(--on)}

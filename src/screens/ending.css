@@ -1,0 +1,9 @@
+@import url("backdrop.css");
+.en{padding-top:10px}.en-holder>*{animation:rise .3s ease}
+.en-axis{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:3px}.en-axis p{margin:0}.en-axis p:empty{display:none}.en-axis .spark{color:var(--gold);height:60px}
+.en-me{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;font-size:.86rem}
+.en-main{min-height:50vh;align-content:center;text-align:center}.en-main h1{font-family:ui-serif,'AppleMyungjo','Noto Serif KR',serif;font-size:2rem;color:#f0cd84}.en-big{font-size:1.15rem;margin:0}
+.en-hidden{background:linear-gradient(135deg,#55462b70,#202632);border-color:#eac47766;color:#f0cd84}.en-hidden .sub{color:#e6dcc2}
+.en-card{min-height:40vh;align-content:center;text-align:center}.en-pic{position:relative;height:180px;width:160px;margin:0 auto;border-radius:20px;overflow:hidden;background:radial-gradient(circle at 50% 30%,#55617a,#2b3346 62%,#1c2330)}.en-pic .who-letter{bottom:50%;transform:translate(-50%,50%);border:0;background:none}
+.en-prev{flex:0 0 30%;width:auto}
+.en .bar>div>.btn.main{flex:1;width:auto}

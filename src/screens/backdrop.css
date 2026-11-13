@@ -1,0 +1,27 @@
+/* 장면·일상의 배경. 그림이 있으면 그림과 계절빛만, 없으면 토큰을 섞은 하늘이 보인다. */
+.backdrop{position:absolute;inset:0;overflow:hidden;background-size:cover;background-position:center;background-color:#1c2432}
+.backdrop.has-art::after{content:'';position:absolute;inset:0;pointer-events:none;background:var(--tint,transparent)}
+.backdrop i{position:absolute;display:block}
+.season-겨울{--sky1:#2a3346;--sky2:#3d4d6c;--sky3:#1c2432;--orb:#d7e2f2;--grd:#b8c7e640;--tint:#b8c7e612}
+.season-봄{--sky1:#39415a;--sky2:#6b566a;--sky3:#1c2432;--orb:#eac477;--grd:#a0d1b340;--tint:#f3c6d312}
+.season-여름{--sky1:#22444d;--sky2:#2f6661;--sky3:#1c2432;--orb:#eac477;--grd:#a0d1b340;--tint:#9fd6c90d}
+.season-가을{--sky1:#4a3a2e;--sky2:#8a6a42;--sky3:#1c2432;--orb:#e9b27a;--grd:#e9b27a40;--tint:#e9b27a14}
+.bd-orb{width:64px;height:64px;border-radius:50%;right:12%;top:12%;background:var(--orb);opacity:.65}
+.bd-ground{left:-10%;right:-10%;bottom:-34px;height:96px;border-radius:50% 50% 0 0;background:var(--grd)}
+.bd-fall{inset:0;opacity:.6;background-image:radial-gradient(circle,#f0f1f4 1.6px,transparent 2.4px),radial-gradient(circle,#f0f1f4 1.2px,transparent 2px);background-size:83px 97px,137px 113px;background-position:0 0,41px 57px;display:none}
+.season-겨울 .bd-fall{display:block;animation:bd-snow 14s linear infinite}
+.season-봄 .bd-fall{display:block;opacity:.45;background-image:radial-gradient(circle,var(--rose) 1.8px,transparent 2.6px);background-size:68px 68px;animation:bd-snow 22s linear infinite}
+@keyframes bd-snow{to{background-position:0 194px,41px 283px}}
+.spark{color:var(--gold);height:72px}.spark svg{display:block;width:100%;height:100%}
+.who-pic{position:relative;height:100%;width:100%;display:flex;align-items:flex-end;justify-content:center}
+/* 화면별 CSS를 읽는 순서와 상관없이 각 사진 틀의 규칙이 이기도록 우선순위를 낮춘다. */
+:where(.who-pic) img{position:relative;display:block;max-width:100%;max-height:100%;object-fit:contain;object-position:bottom;height:100%}
+.who-letter{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:2.4rem;font-weight:700;background:var(--bg2);color:var(--gold);border:2px solid var(--gold)}
+.me-pic{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center}
+.me-pic img{position:relative;height:100%;max-width:100%;object-fit:contain;object-position:bottom}
+.me-shape{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:78%;aspect-ratio:120/150;color:#566076}.me-shape svg{display:block;width:100%;height:100%;fill:currentColor}
+/* 연인 장면: 검은 화면(첫 키스), 호텔 그림(함께 보내는 밤) */
+.backdrop.look-black{background:#000!important}
+.backdrop.look-hotel{background-size:cover;background-position:center 35%}
+.scene:has(.look-black) .stage-shade{display:none}
+.scene:has(.look-black) .beat-box{background:transparent;border-color:transparent;color:#f4efe6;text-align:center;font-size:1.15em;white-space:pre-line}

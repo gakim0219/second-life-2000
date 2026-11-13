@@ -1,0 +1,26 @@
+{
+ "name": "두 번째 인생 2000",
+ "short_name": "두 번째 인생",
+ "lang": "ko",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#10141d",
+ "theme_color": "#10141d",
+ "description": "2026년의 기억을 안고 2000년으로 돌아가 다시 사는 인생 시뮬레이션",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

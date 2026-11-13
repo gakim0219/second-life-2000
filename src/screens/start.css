@@ -1,0 +1,24 @@
+/* 시작: 뒤를 어둡게 두고 아래서 올라온 시트 위에 그림 컷을 놓는다. */
+.pro{position:fixed;inset:0;z-index:30;overflow:auto;background:radial-gradient(ellipse at 20% 0,#2a364f,transparent 60%),var(--bg);display:flex;align-items:flex-end;justify-content:center}
+.pro-back{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(6px) brightness(.35);transform:scale(1.05)}
+.pro-sheet{position:relative;width:100%;max-width:500px;max-height:100%;overflow:auto;background:#19212e;border:1px solid #465268;border-bottom:0;border-radius:23px 23px 0 0;padding:22px 20px max(16px,env(safe-area-inset-bottom,0px));box-shadow:0 25px 80px #0009;animation:sheet-up .28s cubic-bezier(.2,.8,.2,1)}
+.pro-sheet::before{content:'';position:absolute;top:8px;left:calc(50% - 20px);height:3px;width:40px;border-radius:6px;background:#465064}
+.pro-head{padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid #374055}.pro-head h2{margin-top:3px}
+.pro-cut{position:relative;display:block;width:100%;height:min(58vh,480px);padding:0;border-radius:18px;overflow:hidden;background:#151b27;text-align:left}
+.pro-bg{position:absolute;inset:0;background-size:cover;background-position:center}.pro-bg.swap{animation:fade-in .45s ease-out}.pro-bg.dim{filter:brightness(.5) saturate(.7)}
+.pro-shade{position:absolute;inset:0;background:linear-gradient(0deg,#0a101cf0 12%,#0a101c66 45%,transparent 72%),linear-gradient(180deg,#0a101c88,transparent 22%)}
+.pro-inner{position:absolute;inset:0;display:flex;flex-direction:column;padding:18px 20px 16px}
+.pro-when{margin:0 0 auto;font-size:14px;letter-spacing:2px;color:#f4ecd8;text-shadow:0 1px 8px #0009}
+.pro-lines{display:grid;gap:6px;font-family:'Apple SD Gothic Neo','Noto Serif KR',serif;font-family:ui-serif,'AppleMyungjo','Noto Serif KR',serif;font-size:18px;line-height:1.7;color:#f6f1e4;word-break:keep-all}.pro-lines p{margin:0;animation:rise .5s ease both;text-shadow:0 1px 8px #000a}
+.pro-hint{margin-top:10px;align-self:flex-end;font-size:11px;color:#e6dcc2}
+.pro-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.pro-dots{display:flex;gap:7px}.pro-dots i{width:7px;height:7px;border-radius:50%;background:#465064}.pro-dots i.past{background:#8a7a58}.pro-dots i.on{background:var(--gold);transform:scale(1.3)}
+.pro-skip{padding:0 14px;font-size:12px;color:var(--on2)}
+.pro-serif{margin:0 0 14px;font-family:ui-serif,'AppleMyungjo','Noto Serif KR',serif;font-size:17px;line-height:1.8;word-break:keep-all}
+.start{display:block}.start-label{display:block;margin:12px 0 6px;font-size:12px;font-weight:650;color:#d7dce6;padding:0}
+.start-err{margin:6px 0 0;color:var(--red);font-size:.84rem}.start-err:empty{display:none}
+.start-seg{display:flex;gap:4px;background:#111925;border:1px solid var(--line);border-radius:13px;padding:4px}.start-sex{flex:1;border-radius:9px;color:var(--on2);font-size:13px}.start-sex[aria-pressed=true]{background:#374357;color:var(--on);font-weight:650}
+.pledges{border:0;padding:0;margin:0 0 16px;display:grid;gap:8px;min-width:0}
+.pledge{display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#1c2432;cursor:pointer}.pledge:has(input:checked){border-color:var(--gold);background:#eac47714}
+.pledge input{flex:none;width:18px;height:18px;min-height:0;padding:0;accent-color:var(--gold)}.pledge b{display:block;font-size:13px}.pledge small{display:block;font-size:11px;color:var(--on2);line-height:1.6;word-break:keep-all}
+.start-note{margin:12px 0 0;line-height:1.6}

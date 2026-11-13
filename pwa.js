@@ -12,9 +12,18 @@
     const m = e.data; if (!m?.sl) return;
     if (m.type === 'progress' && m.done < m.total) show(`${first ? '오프라인 준비' : '새 버전 받는 중'} ${Math.floor((m.done / m.total) * 100)}%`);
     if (m.type === 'failed') show('일부 파일을 받지 못했습니다. 인터넷이 될 때 다시 열면 이어서 받습니다.', 8000);
+    if (m.type === 'ready' && first && failedBoot()) { location.reload(); return; }
     if (m.type === 'ready' && first) show('오프라인 준비가 끝났습니다. 이제 인터넷 없이 열립니다.', 6000);
   });
-  navigator.serviceWorker.register('sw.js').then((reg) => {
+  // 게임이 먼저 뜬 뒤에 받기 시작한다. 처음부터 같이 받으면 게임이 쓸 파일이 밀려 첫 화면이 실패할 수 있다.
+  const app = document.getElementById('app'), failedBoot = () => app.textContent.includes('불러오지 못했습니다');
+  const booted = new Promise((res) => {
+    const ok = () => app.childElementCount > 0 || failedBoot();
+    if (ok()) return res();
+    const mo = new MutationObserver(() => { if (ok()) { mo.disconnect(); res(); } });
+    mo.observe(app, { childList: true, subtree: true, characterData: true }); setTimeout(res, 20000);
+  });
+  booted.then(() => navigator.serviceWorker.register('sw.js')).then((reg) => {
     if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
     reg.addEventListener('updatefound', () => {
       const w = reg.installing; if (!w) return;

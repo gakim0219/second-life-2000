@@ -2,6 +2,7 @@
 // 1 고비: 몇 번 만난 뒤, 마음이 생기기 시작할 때 / 2 깊어짐: 사귄 지 석 달 / 3 시험: 사귄 지 1년, 결혼 전.
 // {n}=상대 이름, {job}=상대가 하는 일. 조사는 이(가)·과(와)·은(는)·을(를)로 둘 다 적는다.
 // like: 호감(또는 연인 사이) 변화, stress: 스트레스 변화. 첫 선택이 대체로 마음을 여는 쪽이다.
+import MORE from './love_personal_more.js';
 const c = (label, result, like, stress = 0) => ({ label, result, like, stress });
 
 export const ARCS = {
@@ -265,6 +266,7 @@ export const PERSONAL = {
     propose: '설태주가 기타 줄 하나를 풀어 반지처럼 감아 주었습니다. "진짜 반지는 투어비로 샀어. 이건 덤."',
     wedding: '식이 끝나고 설태주 밴드가 즉석 공연을 했습니다. 신랑이 가장 오래 기타를 쳤습니다.',
   },
+  ...MORE, // 유명인 연애 상대의 개인 장면(data/love_personal_more.js)
 };
 
 // 결혼 뒤 이야기. 모든 부부가 차례로 본다(due: 결혼한 뒤 지난 달 수). like는 부부 사이(사이) 변화.

@@ -209,12 +209,17 @@ const HI_MAP = { 느티여고: 'map-high-girls', 서울과학고: 'map-high-scie
 const HI_SFX = { 느티여고: 'girls', 서울과학고: 'science', 새길직업고: 'voc' };
 const UN_MAP = { MIT: 'map-university-mit', 한빛대: 'map-university-hanbit', 새길실무대: 'map-university-saegil' };
 setBgAlias((k) => { const s = appCtx.s, sfx = s && stageOf(s) === '고등' ? HI_SFX[s.school?.고등] : null; return sfx && k.startsWith('hi-') ? [`${k}-${sfx}`, k] : [k]; });
+// 동네 지도. 가족이 아파트로 옮겼으면 집 자리가 아파트인 그림을 먼저 찾는다(사용자 지시 2026-11-16).
+function townMaps(s, seoulNext) {
+  const base = s && stageOf(s) === '고등' ? [...(seoulNext ? ['map-town-hi-seoul'] : []), 'map-town-hi', 'map-town'] : ['map-town'];
+  return s && homeBgs(s).length ? [...base.map((k) => `${k}-apt`), ...base] : base;
+}
 function bgListFor(s, key) {
   const p = s ? PRE[stageOf(s)] : 'el';
   const hiMap = HI_MAP[s?.school?.고등], unMap = UN_MAP[s?.school?.대학];
   const seoulNext = s && otherSchool(s) === '서울고'; // 이웃 학교가 서울고일 때(여학생)
   const fixed = {
-    map_town: s && stageOf(s) === '고등' ? [...(seoulNext ? ['map-town-hi-seoul'] : []), 'map-town-hi', 'map-town'] : ['map-town'], map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: hiMap ? [hiMap, 'map-high'] : ['map-high'], map_u: unMap ? [unMap, 'map-university'] : ['map-university'],
+    map_town: townMaps(s, seoulNext), map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: hiMap ? [hiMap, 'map-high'] : ['map-high'], map_u: unMap ? [unMap, 'map-university'] : ['map-university'],
     office1: ['wk-office'], office2: ['wk-office'], office3: ['wk-office', 'un-club'],
     e_class: ['el-classroom'], m_class: ['mi-classroom'], h_class: ['hi-classroom'], u_class: ['un-classroom'],
     e_yard: ['el-yard'], m_yard: ['mi-yard'], h_yard: ['hi-yard'], u_yard: ['un-yard'],

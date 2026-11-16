@@ -462,7 +462,7 @@ const IN_SCHOOL = [
 ];
 export function placesOf(s) {
   const all = groups(s);
-  const list = PLACES.map((p) => { const g = all.filter((x) => p.groups.includes(x.name)); return { id: p.id, name: p.id === 'other' ? otherName(s) : p.name, open: g.some((x) => x.open), actions: g.flatMap((x) => x.actions) }; });
+  const list = PLACES.map((p) => { const g = all.filter((x) => p.groups.includes(x.name)); return { id: p.id, name: p.id === 'other' ? otherName(s) : p.id === 'home' && s.parentsHome && !s.family?.home ? s.parentsHome.name : p.name, open: g.some((x) => x.open), actions: g.flatMap((x) => x.actions) }; });
   // 서울 지도의 광화문 사무소. 힐아일랜드에 계좌를 맡긴 뒤에만 있다.
   if (officeOpen(s)) list.push({ id: 'hill', name: officeName(s), seoul: true, open: !inArmy(s), actions: listActions(s, '광화문') });
   return list;

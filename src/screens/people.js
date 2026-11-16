@@ -20,6 +20,7 @@ import { meet as crushMeet, otherSchool, studentsAt, homeSchool } from '../crush
 import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
+import { SIS, sisName, sisAge, sisSchool, kinOptions, kinAct } from '../kin.js';
 
 // ───────── 인물 표 ─────────
 // 학교별 인물과 화면 꼬리표. 빈 값은 '같은 반'으로 보인다. 연애·돈·외모와 관련된 말은 꼬리표에 쓰지 않는다.
@@ -33,15 +34,17 @@ const YM = (s) => s.year * 100 + s.month;
 const hash = (t) => { let x = 2166136261; for (const c of String(t)) { x ^= c.charCodeAt(0); x = Math.imul(x, 16777619); } x ^= x >>> 13; x = Math.imul(x, 1597334677); x ^= x >>> 16; return x >>> 0; };
 const isTeacher = (id) => /^t\d/.test(id);
 const isParent = (id) => id === '아버지' || id === '어머니';
-const isKin = (id) => isParent(id) || id === '부모님';
+const isSis = (id) => id === SIS;
+const isKin = (id) => isParent(id) || id === '부모님' || isSis(id);
 // 쪽지·하교는 또래끼리만 어울린다.
 const isPeer = (id) => /^c\d/.test(id);
 
 export const PLACE_NAME = { other: '이웃 학교', home: '집', park: '공원', work: '일터', school: '학교', shop: '상가', cafe: '카페', town: '번화가', classroom: '교실', lab: '특별실', hall: '강당', ground: '운동장', hill: '광화문 사무소' };
 export const nameOf = (id) => (isKin(id) ? id : schoolNameOf(id) ?? netPerson(id)?.이름 ?? lovePerson(id)?.이름 ?? id);
 // 지금 시기에 가장 가까운 사진. 고르는 규칙은 ui.photo에 있다.
-export const photoOf = (id, s) => (isParent(id) ? kinCard(id, stageOf(s)) : id === '부모님' ? null : photo(id, stageOf(s)));
+export const photoOf = (id, s) => (isParent(id) || isSis(id) ? kinCard(id, stageOf(s)) : id === '부모님' ? null : photo(id, stageOf(s)));
 export function tagOf(s, id) {
+  if (isSis(id)) return '여동생';
   if (isKin(id)) return '가족';
   const st = s.school?.[stageOf(s)];
   const list = [ROSTER[st], ...Object.values(s.school ?? {}).map((n) => ROSTER[n])].filter(Boolean);
@@ -85,7 +88,7 @@ export function crowd(s) {
   const out = {};
   const add = (p, id) => { (out[p] ??= []).push(id); };
   const seat = (id, list) => list[hash(`${s.seed ?? 1}:${s.year}:${s.month}:${id}`) % list.length];
-  add('home', '아버지'); add('home', '어머니');
+  add('home', '아버지'); add('home', '어머니'); add('home', SIS);
   if (s.partner?.id) add(s.partner.married ? 'home' : 'cafe', s.partner.id);
   if (inArmy(s)) return out;
   const school = s.school?.[stageOf(s)];
@@ -130,7 +133,8 @@ const whereOf = (s, id) => Object.entries(crowd(s)).find(([, ids]) => ids.includ
 function statusLine(s, id) {
   const where = whereOf(s, id);
   const out = [];
-  if (isKin(id)) out.push('저녁이면 식탁에서 하루 이야기를 듣는다.');
+  if (isSis(id)) out.push(`${sisAge(s)}살. ${sisSchool(s)}. ${s.year * 100 + s.month < 201603 ? '집에서 같이 지낸다.' : '따로 살지만 집에 자주 들른다.'}`);
+  else if (isKin(id)) out.push('저녁이면 식탁에서 하루 이야기를 듣는다.');
   else if (where) out.push(`이번 달에는 ${PLACE_NAME[where]}에서 자주 보인다.`);
   const last = s.bondSeen?.[id];
   const gap = last == null ? null : ym(s) - last;
@@ -182,6 +186,16 @@ function renderPerson(ctx, { id, here = false } = {}) {
   } else if (!loved) {
     actions.push(h('button', { className: 'btn leaf', on: { click: () => act(greet(s, id)) } }, '먼저 말 걸기', h('span', { className: 'chip', text: '칸을 쓰지 않음' })));
   }
+  // 가족에게 해 주는 일(사용자 지시 2026-11-16). 집에서 만났을 때만 고른다.
+  if (here && (isParent(id) || isSis(id))) {
+    const who = isSis(id) ? SIS : '부모님';
+    actions.push(h('h3', { className: 'kin-head', text: isSis(id) ? '미영에게 해 주기' : '부모님께 해 드리기' }));
+    for (const o of kinOptions(s, who)) {
+      const chips = [o.slot ? '칸 1' : null, o.cost ? won(o.cost) : null].filter(Boolean).join(' · ');
+      actions.push(h('button', { className: 'btn', disabled: !o.ok, on: { click: () => { const r = kinAct(s, who, o.key); if (!r.ok) { ctx.toast(r.why); return; } ctx.save?.(); ctx.toast(r.text); ctx.refresh(); } } },
+        o.label, chips ? h('span', { className: 'chip num', text: chips }) : null, !o.ok ? h('span', { className: 'chip lock', text: o.why }) : null));
+    }
+  }
   if (loved) actions.push(h('button', { className: 'btn rose', on: { click: () => ctx.go('love', { id }) } }, '만남 화면으로'));
   if (known && isPeer(id)) { court(s, id, where); const c = crushSection(ctx, id); if (c) actions.push(c); }
   // 멀리 있거나 동네에 안 보여도 연락 창으로는 닿는다.
@@ -198,7 +212,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
     h('div', { className: 'person-pic' }, pic ?? h('b', { text: named ? [...nameOf(id)][0] : '?' })),
     h('div', { className: 'panel person-card stack' },
       h('div', { className: 'stack person-head' },
-        h('div', { className: 'person-title' }, h('div', { className: 'person-name' }, h('h1', { text: named ? nameOf(id) : '처음 보는 얼굴' }), mateMark(s, id), named ? detailBtn(ctx, s, id) : null),
+        h('div', { className: 'person-title' }, h('div', { className: 'person-name' }, h('h1', { text: named ? (isSis(id) ? sisName(s) : nameOf(id)) : '처음 보는 얼굴' }), mateMark(s, id), named ? detailBtn(ctx, s, id) : null),
           named && fullOk(s, id) && fullPhoto(id, stageOf(s)) ? h('button', { className: 'person-fullbtn', on: { click: () => ctx.sheet((close) => h('div', { className: 'stack person-fullsheet' }, h('div', { className: 'person-full' }, fullPhoto(id, stageOf(s))), h('button', { className: 'btn', on: { click: close } }, '닫기'))) } }, '전신 보기') : null),
         named ? h('p', { className: 'sub', text: loved?.관계 ?? tagOf(s, id) }) : h('p', { className: 'sub', text: where === 'other' ? `${otherSchool(s) ?? '이웃 학교'}에서 마주친 얼굴이다.` : '같은 학교에서 자주 마주친다.' })),
       named && !loved?.person?.연애 ? h('div', { className: 'row wrap' }, heartsEl(v.hearts), h('span', { className: 'person-stage', text: v.label })) : null,

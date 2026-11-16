@@ -12,6 +12,7 @@ import { onMonth } from './core.js';
 import * as sound from './sound.js'; import { moodOf } from './sound_rules.js'; import { stageOf } from './rules.js';
 import schoolEvents from '../data/events_school.js'; import univEvents from '../data/events_univ.js'; import beyondEvents from '../data/events_beyond.js';
 import youthEvents, { onReunion, setAdultCheck } from '../data/events_youth.js'; import teaEvents from '../data/events_teahouse.js'; import islandEvents, { HAYEON, onMonth as islandMonth } from '../data/events_island.js'; import chairEvents from '../data/events_chair.js'; import { TEEN_ADULTS, TEEN_NAMES, TEEN_FRIENDS } from '../data/teens.js';
+import familyEvents from '../data/events_family.js';
 import * as crush from './crush.js'; import * as disclose from './disclose.js'; import discloseEvents from '../data/events_disclose.js'; import { allowTextOnly } from './cast.js';
 const SCREENS = { crush: 'love', start: 'start', home: 'home', scene: 'scene', stat: 'stat', paper: 'paper', yearend: 'paper', ending: 'ending', invest: 'invest', asset: 'invest', account: 'invest', map: 'map', place: 'map', person: 'people', people: 'people', album: 'people', company: 'company', love: 'love', family: 'love', settings: 'home', tax: 'tax', movehome: 'parents', messenger: 'messenger' };
 for (const [n, f] of Object.entries(SCREENS)) ctx.register(n, () => import(`./screens/${f}.js`).then((m) => ({ css: `src/screens/${f}.css`, render: m.screens?.[n] ?? m.render })));
@@ -23,7 +24,7 @@ for (const ev of ['pointerdown', 'touchend', 'click', 'keydown']) document.addEv
 document.addEventListener('click', (e) => { if (e.target.closest?.('button, [role=button], .btn')) sound.sfx('tap'); });
 async function boot() {
   const app = document.getElementById('app'); app.textContent = '불러오는 중입니다.';
-  loadEvents([...schoolEvents, ...univEvents, ...beyondEvents, ...youthEvents, ...teaEvents, ...islandEvents, ...chairEvents, ...discloseEvents]);
+  loadEvents([...schoolEvents, ...univEvents, ...beyondEvents, ...youthEvents, ...teaEvents, ...islandEvents, ...chairEvents, ...discloseEvents, ...familyEvents]);
   allowTextOnly(Object.keys(TEEN_NAMES)); onReunion(love.reunite); setAdultCheck(love.canReunite);
   await loadArt();
   const j = (p) => fetch(p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });

@@ -34,7 +34,7 @@ export const left = (s) => LIMIT - init(s).n;
 export const threadOf = (s, id) => init(s).threads[id] ?? [];
 
 // 연락할 수 있는 사람. 학생 때는 또래만, 성인이면 가족·선생님 말고 아는 사람 모두.
-const isKin = (id) => ['부모님', '아버지', '어머니'].includes(id);
+const isKin = (id) => ['부모님', '아버지', '어머니', '미영'].includes(id);
 export function contactable(s, id) {
   if (isKin(id) || /^t\d/.test(id) || !knows(s, id)) return false;
   if (minor(s) && !/^c\d/.test(id)) return false;

@@ -128,13 +128,13 @@ const stageNow = (co) => (co.sold ? 0 : co.stage);
 function spouseOf(s) { const P = s.partner; return P?.married ? P : null; }
 const kidCount = (s) => (spouseOf(s)?.자녀?.length ?? 0) + (s.family?.이전자녀?.length ?? 0);
 function bestFriend(s) {
-  const skip = new Set(['부모님', s.partner?.id]);
+  const skip = new Set(['부모님', '미영', s.partner?.id]);
   let best = null;
   for (const [id, v] of Object.entries(s.bonds ?? {})) if (!skip.has(id) && (best == null || v > best.v)) best = { id, v };
   return best;
 }
 function peopleLevel(s, co) {
-  const friends = Object.entries(s.bonds ?? {}).filter(([id, v]) => id !== '부모님' && id !== s.partner?.id && !isReal(id) && v >= BOND_FRIEND).length;
+  const friends = Object.entries(s.bonds ?? {}).filter(([id, v]) => id !== '부모님' && id !== '미영' && id !== s.partner?.id && !isReal(id) && v >= BOND_FRIEND).length;
   let lv = tierOf(s.stats.인맥);
   if (friends >= 3) lv += 1;
   if (co.staff.length >= 3) lv += 1;
@@ -218,7 +218,7 @@ function epilogue(s, net, co, opts) {
     cards.push({ kind: '가족', who: sp.이름, text: (sp.사이 ?? 0) >= GOOD ? `${sp.이름}과(와) 저녁을 같이 먹는 날이 많습니다.` : `${sp.이름}과(와) 사이에 거리가 있습니다.` });
     for (const c of [...(sp.자녀 ?? []), ...(s.family?.이전자녀 ?? [])]) cards.push({ kind: '가족', who: c.이름, text: `${c.이름}은(는) ${Math.max(0, s.year - c.태어남.year)}살입니다.` });
   }
-  const skip = new Set(['부모님', s.partner?.id]);
+  const skip = new Set(['부모님', '미영', s.partner?.id]);
   const staffIds = new Set(co.staff.map((x) => (typeof x === 'object' ? x.id : x)));
   Object.entries(s.bonds ?? {})
     .filter(([id, v]) => !skip.has(id) && !staffIds.has(id) && !isReal(id) && !/^(v\d|g\d{3})/.test(id) && v >= BOND_CARD)

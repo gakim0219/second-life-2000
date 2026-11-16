@@ -17,7 +17,7 @@ export function newGame({ name = '주인공', sex = '남', seed = 1 } = {}) {
     stats, stress: 10, cash: 30000, used: 0, capacity: capacityOf(stats.체력),
     graduateYear: sex === '남' ? 2014 : 2012,
     study: 0, fame: 0, school: { 초등: '느티초', 중학: '서일중' },
-    flags: {}, seen: [], bonds: { 부모님: 75 }, log: [], queue: [], portfolio: {}, company: null, partner: null, ended: null,
+    flags: {}, seen: [], bonds: { 부모님: 75, 미영: 60 }, log: [], queue: [], portfolio: {}, company: null, partner: null, ended: null,
     ...extras(),
   };
 }
@@ -49,5 +49,6 @@ export function deserialize(t) {
   if (GONE.some((w) => t.includes(w))) purgeGone(s);
   withDefaults(s);
   if (!(s.bonds?.부모님 >= 75)) (s.bonds ??= {}).부모님 = 75; // 부모님 신뢰 5단계 고정
+  if (s.bonds.미영 == null) s.bonds.미영 = 60; // 여동생(사용자 지시 2026-11-16). 옛 저장에도 넣는다.
   return s;
 }

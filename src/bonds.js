@@ -42,7 +42,7 @@ export function bump(s, who, n, opts = {}) {
   const v = bondOf(s, id);
   let next = v + n;
   if (n > 0 && id !== '부모님') {
-    next = v + n * dampOf(v);
+    next = v + n * (id === '미영' ? 0.5 : dampOf(v)); // 가족인 미영은 가까워져도 오르는 폭이 줄지 않는다
   }
   s.bonds[id] = Math.max(id === '부모님' ? PARENT_TRUST : -10, Math.min(BOND_MAX, Math.max(next, n > 0 ? v : -Infinity)));
   (s.bondSeen ??= {})[id] = ym(s);
@@ -130,9 +130,18 @@ const MATE_TEXTS = {
   },
 };
 // 그달 그 행동의 글. place는 만난 장소(park·town·cafe·shop).
+// 여동생 미영과의 대화(사용자 지시 2026-11-16). 미영은 네 살 아래다.
+function sisTalk(s) {
+  const v = s.year * 100 + s.month, call = s.sex === '여' ? '언니' : '오빠';
+  if (v < 200603) return [`미영이 학교에서 받아쓰기 백 점 맞은 이야기를 했다. 공책을 내 코앞까지 들이밀었다.`, `미영이 "${call}, 이거 읽어 줘" 하고 동화책을 들고 왔다. 끝까지 읽어 주었다.`, '미영이 그린 가족 그림을 보여 주었다. 내가 제일 크게 그려져 있었다.', '미영과 만화 주제가를 같이 불렀다. 미영은 가사를 다 외우고 있었다.'];
+  if (v < 200903) return ['미영이 반 친구와 다툰 이야기를 했다. 다 듣고 나니 미영이 먼저 사과하겠다고 했다.', `미영이 "${call}는 중학교 때 어땠어?" 하고 물었다. 아는 만큼 말해 주었다.`, '미영이 좋아하는 가수 이야기를 한참 했다. 이름을 외워 두었다.', '미영이 시험 범위가 너무 많다고 투덜댔다. 계획표를 같이 짜 주었다.'];
+  if (v < 201203) return ['미영이 야자 끝나고 온 얼굴로 식탁에 앉았다. 말없이 과일을 깎아 주었다.', '미영이 진로 이야기를 꺼냈다. 하고 싶은 것과 할 수 있는 것 사이에서 오래 망설였다.', `미영이 "${call}는 안 불안했어?" 하고 물었다. 불안했다고 솔직히 말했다.`, '미영이 모의고사 성적표를 내밀었다. 오른 과목부터 짚어 주었다.'];
+  return ['미영과 요즘 사는 이야기를 했다. 어릴 때 이야기가 나오자 둘 다 웃었다.', '미영이 부모님 건강 이야기를 먼저 꺼냈다. 번갈아 챙기기로 했다.', `미영이 "${call} 덕분에 여기까지 왔지" 하고 지나가듯 말했다. 못 들은 척했다.`, '미영이 일 때문에 힘들다고 했다. 다 듣고 밥을 샀다.'];
+}
 export function talkText(s, id, kind, place) {
   const M = MATE_TEXTS[mateOf(s, id)]?.[kind];
   if (M) return pickText(s, id, M);
+  if (id === '미영') return pickText(s, id, sisTalk(s));
   const T = TEXTS[kind];
   if (kind === '대화') return pickText(s, id, inTerm(s) || stageOf(s) === '사회인' ? T.term : summer(s) ? T.summer : T.winter);
   if (kind === '놀기') { const winter = [12, 1, 2].includes(s.month); return pickText(s, id, [...(T[place] ?? []), ...(winter ? T.winter : []), ...T.any]); }
@@ -191,7 +200,7 @@ export const FADE_AFTER = 24, FADE_FLOOR = 9, LIFELONG = 75;
 export function fade(s) {
   if (s.month % 3 !== 0) return;
   for (const [id, v] of Object.entries(s.bonds ?? {})) {
-    if (id === '부모님' || id === s.partner?.id || id === s.crush?.partner?.id || v >= LIFELONG || v <= FADE_FLOOR) continue;
+    if (id === '부모님' || id === '미영' || id === s.partner?.id || id === s.crush?.partner?.id || v >= LIFELONG || v <= FADE_FLOOR) continue;
     const seen = s.bondSeen?.[id];
     if (seen == null || ym(s) - seen < FADE_AFTER) continue;
     s.bonds[id] = Math.max(FADE_FLOOR, v - 1); // bondSeen은 그대로 둔다. 멀어지는 것은 만난 것이 아니다

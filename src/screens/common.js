@@ -301,7 +301,7 @@ export function mePic(s) {
   return wrap;
 }
 // 이 문장에 나오는 가족. 사진이 있는 사람만 돌려준다.
-const KIN = [['아버지', /아버지|아빠/], ['어머니', /어머니|엄마/], ['할머니', /할머니/]];
+const KIN = [['아버지', /아버지|아빠/], ['어머니', /어머니|엄마/], ['할머니', /할머니/], ['미영', /미영/]];
 // '민혁의 어머니'처럼 남의 가족은 빼고 본다.
 export function kinOf(text, who, extra = []) {
   const t = String(text ?? '').replace(/[가-힣]+(?:의|네) (?:아버지|아빠|어머니|엄마|할머니)/g, ''), both = who === '부모님' || /부모님/.test(t);

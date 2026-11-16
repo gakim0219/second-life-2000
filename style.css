@@ -82,3 +82,5 @@ body.has-nav .bar{bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));pa
 .kr-dot{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--rose);box-shadow:0 0 12px var(--rose)}
 .kr-said{text-align:center;font-weight:700;min-height:1.4em;margin:0}.kr-tap{min-height:64px;font-size:1.2rem}
 .next-refill{padding:6px 12px;font-size:13px}
+
+.mate{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:10px;background:#e0527a22;color:#c2305c;font-style:normal;font-weight:700;font-size:11px;line-height:1.5;white-space:nowrap;vertical-align:middle}

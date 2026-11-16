@@ -73,6 +73,13 @@ const START = { c107: 200603, c118: 200603 };
 const inWindow = (s, id, school) => { const end = WINDOW[`${id}@${school}`]; return (!end || yyyymm(s) <= end) && yyyymm(s) >= (START[id] ?? 0); };
 // 이웃 학교에 지금 다니는 아이들(전학·졸업·입학 시기를 본다). 동네 지도의 이웃 학교에 보인다.
 export const studentsAt = (s, school) => (POOL[school] ?? []).filter((id) => inWindow(s, id, school));
+// 그 아이가 다니는 학교. 내 학교 명단에 있으면 내 학교, 어느 명단에도 없으면 '다른 학교'.
+export function homeSchool(s, id) {
+  const own = ownSchool(s);
+  if (schoolOf(id)) return schoolOf(id);
+  if (POOL[own]?.includes(id)) return own;
+  return Object.keys(POOL).find((k) => POOL[k].includes(id)) ?? '다른 학교';
+}
 // 후보 조건. 모든 만남이 이 함수를 거친다.
 export function canBe(s, id, school) {
   const p = infoOf(id);

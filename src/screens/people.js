@@ -16,7 +16,7 @@ import { newsScrap, visibleHints, pastMemories } from '../paper.js';
 import { regressionNote, noteYears, halfNote, HALF_FROM, DISCLAIMER } from '../invest.js';
 import { kinCard } from './common.js';
 import { crushSection } from './love.js';
-import { meet as crushMeet, otherSchool, studentsAt } from '../crush.js';
+import { meet as crushMeet, otherSchool, studentsAt, homeSchool } from '../crush.js';
 import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
@@ -58,6 +58,17 @@ export function face(id, s, cls = '', met = false) {
   const known = met || knows(s, id) || !!(s.love?.people?.[id] || s.partner?.id === id);
   const first = known ? [...nameOf(id)][0] : '?';
   return h('span', { className: `face ${cls} ${known ? '' : 'new'}`.trim(), 'aria-hidden': 'true' }, h('b', { text: first }), photoOf(id, s));
+}
+// 사귀는 사람은 이름 옆에 표시한다(사용자 지시 2026-11-16).
+export function mateMark(s, id) {
+  const t = s.partner?.id === id ? (s.partner.married ? '배우자' : '연인') : s.crush?.partner?.id === id ? '연인' : null;
+  return t ? h('em', { className: 'mate', text: `♥ ${t}` }) : null;
+}
+// 고등학생 때 아는 또래는 학교가 달라도 마음을 쌓을 수 있다(사용자 지시 2026-11-16). 조건은 crush.canBe가 본다.
+function court(s, id, where) {
+  if (!isPeer(id) || stageOf(s) !== '고등') return;
+  const own = ROSTER[s.school?.고등]?.[id] !== undefined;
+  crushMeet(s, id, own ? '같은 반' : where === 'other' ? '이웃 학교' : '동네 친구', homeSchool(s, id));
 }
 export const heartsEl = (n) => h('span', { className: 'hearts', role: 'img', 'aria-label': `하트 ${n}개`, text: '♥'.repeat(n) + '♡'.repeat(5 - n) });
 
@@ -144,8 +155,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
   // 결과 글은 알림으로 띄운다(사용자 지시 2026-11-12: 사진과 버튼 사이에 칸이 생겨 버튼이 밀리지 않게).
   const act = (r) => {
     if (!r.ok) { ctx.toast(r.why); return; }
-    if (isPeer(id) && ROSTER[s.school?.[stageOf(s)]]?.[id] !== undefined) crushMeet(s, id, '같은 반');
-    else if (isPeer(id) && where === 'other') crushMeet(s, id, '이웃 학교', otherSchool(s));
+    court(s, id, where);
     const opened = learnedNow(s, id, before) ?? profileLearned(s, id, beforeP);
     ctx.toast(opened ? `${r.text} ${opened}` : r.text);
     ctx.refresh();
@@ -173,7 +183,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
     actions.push(h('button', { className: 'btn leaf', on: { click: () => act(greet(s, id)) } }, '먼저 말 걸기', h('span', { className: 'chip', text: '칸을 쓰지 않음' })));
   }
   if (loved) actions.push(h('button', { className: 'btn rose', on: { click: () => ctx.go('love', { id }) } }, '만남 화면으로'));
-  if (known && isPeer(id)) { const c = crushSection(ctx, id); if (c) actions.push(c); }
+  if (known && isPeer(id)) { court(s, id, where); const c = crushSection(ctx, id); if (c) actions.push(c); }
   // 멀리 있거나 동네에 안 보여도 연락 창으로는 닿는다.
   if (known && mz.contactable(s, id)) actions.push(h('button', { className: 'btn sky', on: { click: () => ctx.go('messenger', { id }) } }, '연락하기', h('span', { className: 'chip', text: `이번 달 남은 연락 ${mz.left(s)}/${mz.LIMIT}` })));
   if (here) for (const f of friendHelps(s).filter((x) => x.id === id)) actions.push(helpBtn(ctx, f));
@@ -188,7 +198,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
     h('div', { className: 'person-pic' }, pic ?? h('b', { text: named ? [...nameOf(id)][0] : '?' })),
     h('div', { className: 'panel person-card stack' },
       h('div', { className: 'stack person-head' },
-        h('div', { className: 'person-title' }, h('div', { className: 'person-name' }, h('h1', { text: named ? nameOf(id) : '처음 보는 얼굴' }), named ? detailBtn(ctx, s, id) : null),
+        h('div', { className: 'person-title' }, h('div', { className: 'person-name' }, h('h1', { text: named ? nameOf(id) : '처음 보는 얼굴' }), mateMark(s, id), named ? detailBtn(ctx, s, id) : null),
           named && fullOk(s, id) && fullPhoto(id, stageOf(s)) ? h('button', { className: 'person-fullbtn', on: { click: () => ctx.sheet((close) => h('div', { className: 'stack person-fullsheet' }, h('div', { className: 'person-full' }, fullPhoto(id, stageOf(s))), h('button', { className: 'btn', on: { click: close } }, '닫기'))) } }, '전신 보기') : null),
         named ? h('p', { className: 'sub', text: loved?.관계 ?? tagOf(s, id) }) : h('p', { className: 'sub', text: where === 'other' ? `${otherSchool(s) ?? '이웃 학교'}에서 마주친 얼굴이다.` : '같은 학교에서 자주 마주친다.' })),
       named && !loved?.person?.연애 ? h('div', { className: 'row wrap' }, heartsEl(v.hearts), h('span', { className: 'person-stage', text: v.label })) : null,
@@ -274,7 +284,7 @@ function peopleRow(ctx, s, p) {
   return h('button', { className: 'p-row', on: { click: () => ctx.go('person', { id: p.id }) } },
     face(p.id, s, 'lg', true),
     h('small', { className: 'p-tag', text: p.tag }),
-    h('b', { className: 'p-name', text: nameOf(p.id) }),
+    h('b', { className: 'p-name' }, nameOf(p.id), mateMark(s, p.id)),
     h('span', { className: 'p-bond' }, p.hearts != null ? heartsEl(p.hearts) : null, h('em', { text: p.note })));
 }
 // 연락 창 버튼. 버디버디·싸이월드 때는 컴퓨터, 문자·카톡이 열리면 휴대폰 아이콘.

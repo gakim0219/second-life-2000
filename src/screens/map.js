@@ -12,7 +12,7 @@ import { showMet } from './love.js';
 import { openCashier, openKaraoke, nextBar, kinCard } from './common.js';
 import { officeStaff, islandPeople, islandProfile } from '../../data/events_island.js';
 import { icon } from './icons.js';
-import { face, heartsEl, crowd, nameOf, tagOf, photoOf, PLACE_NAME } from './people.js';
+import { face, heartsEl, mateMark, crowd, nameOf, tagOf, photoOf, PLACE_NAME } from './people.js';
 
 // ───────── 지도 자료 ─────────
 const MAP_KEY = { 초등: 'map_e', 중학: 'map_m', 고등: 'map_h', 대학: 'map_u' };
@@ -411,7 +411,7 @@ function renderPlace(ctx, params = {}) {
         const st = bondStage(s, who);
         return h('button', { className: 'stand', 'aria-label': known ? `${nameOf(who)}, ${st.label}` : '처음 보는 얼굴', on: { click: () => ctx.go('person', { id: who, here: true }) } },
           h('span', { className: 'stand-pic' }, photoOf(who, s) ?? h('b', { text: known ? [...nameOf(who)][0] : '?' })),
-          h('span', { className: 'stand-tag' }, h('b', { text: known ? nameOf(who) : '처음 보는 얼굴' }), known ? heartsEl(st.hearts) : h('span', { className: 'sub', text: tagOf(s, who) })));
+          h('span', { className: 'stand-tag' }, h('b', {}, known ? nameOf(who) : '처음 보는 얼굴', mateMark(s, who)), known ? heartsEl(st.hearts) : h('span', { className: 'sub', text: tagOf(s, who) })));
       })) : staff.length ? h('div', { className: 'stands' }, staff.map((m) => h('button', { className: 'stand', 'aria-label': `${m.name} 상세`, on: { click: () => hillSheet(ctx, s, '하연') } },
         h('span', { className: 'stand-pic' }, kinCard(m.pic, stageOf(s)) ?? h('b', { text: [...m.name][0] })),
         h('span', { className: 'stand-tag' }, h('b', { text: m.name }), h('span', { className: 'sub', text: m.tag }))))) : h('p', { className: 'place-empty', text: isVacation(s) && inSchool ? '방학이라 아무도 없다.' : '지금은 아무도 없다.' })), `place_${id}`, placeBg(id)),

@@ -2,7 +2,7 @@
 import { h } from '../ui.js';
 import * as mz from '../messenger.js';
 import { bondStage } from '../bonds.js';
-import { face, nameOf, abroadOf, heartsEl } from './people.js';
+import { face, nameOf, abroadOf, heartsEl, mateMark } from './people.js';
 
 let chosen = null; // 고른 앱. 그 시기에 없으면 가장 새 앱으로 돌아간다.
 const SEASON = (m) => (m <= 2 || m === 12 ? '겨울' : m <= 5 ? '봄' : m <= 8 ? '여름' : '가을');
@@ -27,7 +27,7 @@ function renderList(ctx, s, app) {
     return h('button', { className: 'mz-row', on: { click: () => ctx.go('messenger', { id }) } },
       face(id, s, 'lg', true),
       h('span', { className: 'mz-row-main' },
-        h('span', { className: 'mz-row-top' }, h('b', { text: nameOf(id) }),
+        h('span', { className: 'mz-row-top' }, h('b', { text: nameOf(id) }), mateMark(s, id),
           abroad ? h('em', { className: 'mz-tag', text: abroad === '해외' ? '해외' : abroad }) : null,
           gap != null && gap >= 24 ? h('em', { className: 'mz-tag far', text: '오래 연락 없음' }) : null,
           sent ? h('em', { className: 'mz-tag done', text: '이번 달 연락함' }) : null),
@@ -61,7 +61,7 @@ function renderThread(ctx, s, app, id) {
     h('button', { className: 'nav-back', on: { click: () => ctx.back() } }, '‹ 연락 목록'),
     ...head(s, app, nameOf(id)),
     h('section', { className: 'mz-frame' },
-      h('div', { className: 'mz-bar' }, face(id, s, '', true), h('b', { className: 'mz-who', text: nameOf(id) }), heartsEl(st.hearts), h('span', { className: 'mz-app', text: mz.APPS[app].name })),
+      h('div', { className: 'mz-bar' }, face(id, s, '', true), h('b', { className: 'mz-who', text: nameOf(id) }), mateMark(s, id), heartsEl(st.hearts), h('span', { className: 'mz-app', text: mz.APPS[app].name })),
       box,
       app === 'sms' ? h('p', { className: 'mz-bytes num', text: `${bytes(draft)}/80 byte` }) : null,
       h('div', { className: 'mz-acts' }, mz.ACTS.map((act) => {

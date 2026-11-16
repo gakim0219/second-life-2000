@@ -154,7 +154,7 @@ function statusLine(s, id) {
 // 친해지면 열리는 이야기까지 얼마나 남았는지. 숫자 대신 막대로 보여 준다.
 function storyLine(s, id) {
   const n = nextStory(s, id); if (!n) return null;
-  if (n.done) return h('p', { className: 'small sub', text: '이 사람과의 중학교 이야기를 모두 보았다.' });
+  if (n.done) return h('p', { className: 'small sub', text: `이 사람과의 ${n.stage === '고등' ? '고등학교' : '중학교'} 이야기를 모두 보았다.` });
   const bar = h('i'); bar.style.width = `${Math.min(100, Math.max(4, (n.have / n.need) * 100))}%`;
   return h('div', { className: 'story-next' }, h('small', { text: n.ready ? `다음 이야기 ${n.n}/${n.total} · 다음 달에 열린다` : `다음 이야기 ${n.n}/${n.total} · 더 친해지면 열린다` }), h('span', { className: 'h-tiredbar', 'aria-hidden': 'true' }, bar));
 }

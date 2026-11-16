@@ -14,15 +14,16 @@ export function timesBar() {
     } } })));
   return bar;
 }
-// 고른 횟수만큼 되풀이한다. 돈이 들거나, 칸을 쓰지 않거나, 사람을 만나거나, 시험이 나오면 한 번에서 멈춘다.
+// 고른 횟수만큼 되풀이한다. 돈이 드는 활동(플렉스 등)도 되풀이한다(사용자 지시 2026-11-16). 돈이 모자라면 거기서 멈춘다.
+// 칸을 쓰지 않거나, 사람을 만나거나, 시험이 나오면 한 번에서 멈춘다. 가진 물건은 활동 쪽에서 두 번 사지 않게 막는다.
 export function doMany(s, id) {
   const stats = { ...s.stats }, stress = s.stress;
-  let cash = s.cash, used = s.used, r = doAction(s, id);
+  let used = s.used, r = doAction(s, id);
   if (!r.ok || r.route) return r;
   let times = 1, slots = r.effects?.slots ?? 0;
-  const stop = (x) => x.met || x.exam || s.cash < cash || s.used === used;
+  const stop = (x) => x.met || x.exam || s.used === used;
   while (!stop(r) && (n === 0 || times < n)) {
-    cash = s.cash; used = s.used;
+    used = s.used;
     const x = doAction(s, id);
     if (!x.ok) break;
     r = x; times += 1; slots += x.effects?.slots ?? 0;

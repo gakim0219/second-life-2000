@@ -2,13 +2,15 @@
 // 사이가 선에 닿고 앞 편을 보았으면 다음 달에 열린다. 고비 편은 고르는 데 따라 사이가 크게 오르내린다.
 // 본문 규칙: 금액·능력치 숫자를 쓰지 않는다.
 import { stageOf } from '../src/rules.js';
+import { HS_ARCS } from './bonds_hs.js';
 const pick = (label, result, effect, when) => ({ label, result, ...(effect ? { effect } : {}), ...(when ? { when } : {}) });
 export const ARC_AT = [25, 40, 55], ARC_STAGE = '중학';
 const key = (id, n) => `bd_${id}_${n}`;
 // 한 사람의 세 편을 만든다. 편마다 [제목, 본문, 선택들, 장소].
-const arc = (id, parts) => parts.map(([title, text, choices, place], i) => ({
+// 고등학교 이야기는 그 아이 학교에 다닐 때만 열린다(school).
+const arc = (id, parts, stage = ARC_STAGE, school = null) => parts.map(([title, text, choices, place], i) => ({
   id: key(id, i + 1), title, who: id, text, place: place ?? 'classroom', choices,
-  when: { stage: ARC_STAGE, test: (s) => (s.bonds?.[id] ?? 0) >= ARC_AT[i] && (i === 0 || s.seen.includes(key(id, i))) },
+  when: { stage, ...(school ? { school } : {}), test: (s) => (s.bonds?.[id] ?? 0) >= ARC_AT[i] && (i === 0 || s.seen.includes(key(id, i))) },
 }));
 const ARCS = {
   c01: [
@@ -102,12 +104,14 @@ const ARCS = {
     ], 'hall'],
   ],
 };
-export default Object.entries(ARCS).flatMap(([id, parts]) => arc(id, parts));
+export default [...Object.entries(ARCS).flatMap(([id, parts]) => arc(id, parts)), ...Object.entries(HS_ARCS).flatMap(([id, [school, parts]]) => arc(id, parts, '고등', school))];
 // 사람 화면의 '다음 이야기' 줄. 열릴 이야기가 없으면 null.
 export function nextStory(s, id) {
-  if (!ARCS[id] || stageOf(s) !== ARC_STAGE) return null;
+  const hs = HS_ARCS[id];
+  const ok = (ARCS[id] && stageOf(s) === ARC_STAGE) || (hs && stageOf(s) === '고등' && s.school?.고등 === hs[0]);
+  if (!ok) return null;
   const n = [1, 2, 3].find((i) => !s.seen.includes(key(id, i)));
-  if (!n) return { done: true, total: 3 };
+  if (!n) return { done: true, total: 3, stage: stageOf(s) };
   const need = ARC_AT[n - 1], have = s.bonds?.[id] ?? 0;
   return { n, total: 3, need, have, ready: have >= need };
 }

@@ -8,7 +8,7 @@ const pick = (label, result, effect, when) => ({ label, result, ...(effect ? { e
 const live = (label, effect = {}) => ({ label, result: null, resultOf: (s) => s.crush?.last ?? null, effect: { stats: {}, ...effect } });
 
 // ───────── 친구 무리 ─────────
-const GROUP = { 청솔중: ['c01', 'c06', 'c11', 'c02', 'c05'], 한빛고: ['c09', 'c11', 'c07', 'c37'], 푸른여고: ['c02', 'c04', 'c40', 'c39'], 한빛과학고: ['c16', 'c19', 'c43', 'c44'], 새길특성화고: ['c01', 'c06', 'c20', 'c24'] };
+const GROUP = { 청솔중: ['c01', 'c06', 'c11', 'c02', 'c05'], 한빛사립고: ['c09', 'c11', 'c07', 'c37'], 푸른여고: ['c02', 'c04', 'c40', 'c39'], 한빛과학고: ['c16', 'c19', 'c43', 'c44'], 새길특성화고: ['c01', 'c06', 'c20', 'c24'] };
 export const groupOf = (s) => GROUP[crush.ownSchool(s)] ?? [];
 const names = (s) => groupOf(s).map(crush.nameOf);
 const list = (s) => { const n = names(s); return n.length > 1 ? `${n.slice(0, -1).join(', ')}, ${n[n.length - 1]}` : n[0] ?? '친구들'; };
@@ -36,14 +36,14 @@ const FEST = (y, stage) => E(`yo_fest_visit_${y}`, '축제에 온 다른 학교 
     ] });
 const TRIP = E('yo_trip_meet_06', '수학여행지에서', { year: 2006, month: 10, stage: '고등' },
   '수학여행 숙소에는 다른 학교도 함께 묵었다.', {
-    textOf: (s) => `수학여행 이틀째 밤, 숙소 앞마당에 다른 학교 학생들도 나와 있었다. ${s.sex === '남' ? '매화여고' : '한빛고'} 아이들이 같은 숙소에 묵는다고 했다. 선생님들이 서로 눈치를 보며 순찰을 돌았다.`,
+    textOf: (s) => `수학여행 이틀째 밤, 숙소 앞마당에 다른 학교 학생들도 나와 있었다. ${s.sex === '남' ? '매화여고' : '한빛사립고'} 아이들이 같은 숙소에 묵는다고 했다. 선생님들이 서로 눈치를 보며 순찰을 돌았다.`,
     choices: [
       live('앞마당 벤치에 앉아 있는다', { stress: -4, run: (s) => { s.flags.수학여행중 = true; metLine(s, '수학여행', '별만 실컷 보다 들어왔다. 친구가 너는 왜 맨날 하늘만 보냐고 놀렸다.'); } }),
       pick('방에서 친구들과 게임을 한다', '베개 싸움 끝에 선생님에게 들켰다. 다 같이 복도에 나가 벌을 섰다. 그것마저 웃겼다.', { stats: { 인맥: 1 }, stress: -5, run: (s) => { s.flags.수학여행중 = true; } }),
     ] });
 const INTRO = (y, m) => E(`yo_intro_${y}`, '친구의 소개', { year: y, month: m, stage: '고등', test: (s) => groupOf(s).some((id) => (s.bonds?.[id] ?? 0) >= 20) },
   '친구가 누군가를 데려오겠다고 했다.', {
-    textOf: (s) => `${nth(s, 0)}이(가) 점심시간에 다가와 말했다. "내 사촌이 ${s.sex === '남' ? '매화여고' : '한빛고'} 다니는데, 너 얘기 했더니 한번 보고 싶대. 주말에 분식집 어때?"`,
+    textOf: (s) => `${nth(s, 0)}이(가) 점심시간에 다가와 말했다. "내 사촌이 ${s.sex === '남' ? '매화여고' : '한빛사립고'} 다니는데, 너 얘기 했더니 한번 보고 싶대. 주말에 분식집 어때?"`,
     choices: [
       live('나가 본다', { stats: { 인맥: 1 }, run: (s) => metLine(s, '친구 소개', '나갔더니 사촌이 갑자기 학원이 생겼다며 오지 않았다. 친구와 둘이 떡볶이만 먹었다.') }),
       pick('부끄러워서 사양한다', '친구가 아쉽다며 혀를 찼다. 다음에 또 기회가 있겠지.'),

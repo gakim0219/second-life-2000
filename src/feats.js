@@ -6,8 +6,8 @@ const base = (s, k) => s.stats[k] - (s.gear?.applied?.[k] ?? 0);
 // [id, 이름, 조건, 보너스]
 export const FEATS = [
   ['ioi_gold', 'IOI 금메달', (s) => !!s.flags.IOI금메달, { 지능: 10 }],
-  ['top_univ', '한성대·NIT 입학', (s) => ['한성대', 'NIT'].includes(s.school?.대학) && ['대학', '사회인'].includes(stageOf(s)), { 지능: 5 }],
-  ['top_grad', '한성대·NIT 졸업', (s) => !!(s.flags['졸업:한성대'] || s.flags['졸업:NIT']), { 지능: 10 }],
+  ['top_univ', '한성국립대·NIT 입학', (s) => ['한성국립대', 'NIT'].includes(s.school?.대학) && ['대학', '사회인'].includes(stageOf(s)), { 지능: 5 }],
+  ['top_grad', '한성국립대·NIT 졸업', (s) => !!(s.flags['졸업:한성국립대'] || s.flags['졸업:NIT']), { 지능: 10 }],
   ['grad_school', '대학원 진학', (s) => !!s.flags['진로:대학원'], { 지능: 5 }],
   ['co_top', '회사 5단계', (s) => (s.company?.stage ?? 0) >= 5, { 지능: 10 }],
   ['army', '전역', (s) => !!s.flags.전역, { 체력: 8 }],

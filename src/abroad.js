@@ -16,7 +16,7 @@ export const SCHOOLS = [
   { name: '레이크쇼어 주립대', bar: 42 },
 ];
 export const OTHERS = SCHOOLS.slice(1).map((x) => x.name);
-export const TEACHER = { 한빛과학고: 't06', 한빛고: 't05', 푸른여고: 't12', 새길특성화고: 't07' };
+export const TEACHER = { 한빛과학고: 't06', 한빛사립고: 't05', 푸른여고: 't12', 새길특성화고: 't07' };
 const ym = (s) => s.year * 100 + s.month;
 const hash = (str) => { let h = 2166136261; for (const c of String(str)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } h ^= h >>> 13; h = Math.imul(h, 1597334677); h ^= h >>> 16; return h >>> 0; };
 const rand = (s, salt) => hash(`${s.seed ?? 1}:abroad:${salt}`) / 4294967296;

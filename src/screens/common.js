@@ -203,7 +203,7 @@ const homeList = (s) => [...homeBgs(s), SEASON_FILE[seasonOf(s.month)], 'home', 
 const workList = (s) => (stageOf(s) === '사회인' ? ['office1', 'wk-office'] : s.flags?.부모_찻집 ? ['tea-inside', 'tea-open', 'store'] : ['store']);
 const hallList = (p) => ['stage', ROOM.office[p]];
 // 키 -> 파일 후보 표. 키는 화면이 부르는 이름(지도, place_<id>, scene_<id>, 회사 사무실, 옛 장소 이름)이다.
-// 고등학교마다 다른 교내 지도(사용자 지시 2026-11-16). 한빛고는 map-high를 그대로 쓴다.
+// 고등학교마다 다른 교내 지도(사용자 지시 2026-11-16). 한빛사립고는 map-high를 그대로 쓴다.
 const HI_MAP = { 푸른여고: 'map-high-girls', 한빛과학고: 'map-high-science', 새길특성화고: 'map-high-voc' };
 // 교실·도서관 같은 고등학교 안 그림도 학교마다 다르다. hi-classroom → hi-classroom-girls. 없으면 원래 그림.
 const HI_SFX = { 푸른여고: 'girls', 한빛과학고: 'science', 새길특성화고: 'voc' };
@@ -217,7 +217,7 @@ function townMaps(s, seoulNext) {
 function bgListFor(s, key) {
   const p = s ? PRE[stageOf(s)] : 'el';
   const hiMap = HI_MAP[s?.school?.고등], unMap = UN_MAP[s?.school?.대학];
-  const seoulNext = s && otherSchool(s) === '한빛고'; // 이웃 학교가 한빛고일 때(여학생)
+  const seoulNext = s && otherSchool(s) === '한빛사립고'; // 이웃 학교가 한빛사립고일 때(여학생)
   const fixed = {
     map_town: townMaps(s, seoulNext), map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: hiMap ? [hiMap, 'map-high'] : ['map-high'], map_u: unMap ? [unMap, 'map-university'] : ['map-university'],
     office1: ['wk-office'], office2: ['wk-office'], office3: ['wk-office', 'un-club'],

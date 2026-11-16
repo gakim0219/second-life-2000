@@ -1,5 +1,5 @@
 // 학창 시절 새 인물 15명(사용자 지시 2026-11-09). 중학교 연애는 폐기해 모두 고등학교 인물이다. 모두 지어낸 사람이다. 학교 이름만 실제 이름을 빌렸다.
-// teen: 학생 때 '풋풋한 마음'에서 쓰는 설정. 학생 때는 사진 없이 이니셜로만 보인다.
+// teen: 학생 때 '풋풋한 마음'에서 쓰는 설정. 고등학생 사진을 쓴다(2026-11-16).
 // adult: 성인이 된 뒤 동창 연애 후보(data/dates.json과 같은 모양). 사진은 성인 모습만 만든다.
 // 본문 규칙: 금액·능력치 숫자·구간 숫자를 쓰지 않는다. 스킨십은 손잡기까지만 쓴다.
 const P = (id, 이름, 성별, 출생연도, teen, adult) => ({ id, 이름, 성별, 출생연도, teen, adult });
@@ -75,4 +75,6 @@ export const TEEN_ADULTS = TEENS.map((t) => ({
     첫_만남: `${t.teen.학교} 시절 이야기로 한참 웃었습니다.`, '좋아하는 것': t.adult['좋아하는 것'], '끝나는 경우': t.adult['끝나는 경우'], 잘되면: t.adult.잘되면, 결혼의향: true, 재개: null },
   결혼연도: null,
 }));
+// 학생 때 '상세'에 보이는 집안. data/friends.json과 같은 모양.
+export const TEEN_FRIENDS = Object.fromEntries(TEENS.map((t) => [t.id, { family: [t.teen.집안].filter(Boolean), situation: [] }]));
 export const TEEN_NAMES = Object.fromEntries(TEENS.map((t) => [t.id, t.이름]));

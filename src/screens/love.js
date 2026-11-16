@@ -281,16 +281,16 @@ function familyScreen(ctx) {
 }
 
 // ---------- 풋풋한 마음 (중·고등학생) ----------
-// 학생 때는 사진을 쓰지 않는다. 이니셜만 보인다.
-const teenAv = (name, cls = '') => h('span', { className: `lv-av teen ${cls}`, 'aria-hidden': 'true' }, h('span', { text: (name ?? '?').slice(0, 1) }));
-function teenMoment(ctx, name, title, text) {
-  ctx.sheet((close) => h('div', { className: 'stack lv-sheet lv-moment' }, name ? teenAv(name, 'big lv-center') : null, h('h2', { text: title }), h('p', { text }),
+// 고등학생 때 사진을 쓴다(사용자 지시 2026-11-16: 이니셜만 쓰던 규칙을 없앰). 사진이 없으면 이니셜이 보인다.
+const teenAv = (id, name, cls = '') => h('span', { className: `lv-av teen ${cls}`, 'aria-hidden': 'true' }, h('span', { text: (name ?? '?').slice(0, 1) }), id ? photo(id, '고등') : null);
+function teenMoment(ctx, id, name, title, text) {
+  ctx.sheet((close) => h('div', { className: 'stack lv-sheet lv-moment' }, name ? teenAv(id, name, 'big lv-center') : null, h('h2', { text: title }), h('p', { text }),
     h('button', { type: 'button', className: 'btn main', text: '확인', on: { click: close } })));
 }
-function crushRun(ctx, r, name, title) {
+function crushRun(ctx, r, id, name, title) {
   if (!r.ok) { ctx.toast(r.why); return; }
   ctx.save?.();
-  teenMoment(ctx, name, r.title ?? title, r.text);
+  teenMoment(ctx, id, name, r.title ?? title, r.text);
   ctx.refresh();
 }
 function crushCard(ctx, p) {
@@ -299,29 +299,29 @@ function crushCard(ctx, p) {
   const cf = crush.canConfess(s, p.id);
   const info = p.info ?? {};
   return h('section', { className: 'panel stack lv-teen' },
-    h('div', { className: 'row' }, teenAv(p.이름, 'big'), h('div', { className: 'lv-grow' },
+    h('div', { className: 'row' }, teenAv(p.id, p.이름, 'big'), h('div', { className: 'lv-grow' },
       h('div', { className: 'row lv-chips' }, h('span', { className: 'lv-tag', text: p.단계 }), p.first ? h('span', { className: 'lv-tag first', text: '첫 번째 인생의 그 아이' }) : null),
       h('h2', { text: p.이름 }), h('p', { className: 'small', text: info.소개?.includes(p.학교 ?? '') ? info.소개 : [p.학교, info.소개 ?? p.길].filter(Boolean).join(' · ') }))),
     info.성격 ? h('p', { className: 'small', text: info.성격 }) : null,
     info.말버릇 ? h('p', { className: 'lv-quote', text: `"${info.말버릇}"` }) : null,
-    h('div', { className: 'grid2 lv-dates' }, acts.map((a) => h('button', { type: 'button', className: 'btn lv-date', disabled: !a.ok, on: { click: () => crushRun(ctx, crush.act(s, p.id, a.k), p.이름, a.label) } },
+    h('div', { className: 'grid2 lv-dates' }, acts.map((a) => h('button', { type: 'button', className: 'btn lv-date', disabled: !a.ok, on: { click: () => crushRun(ctx, crush.act(s, p.id, a.k), p.id, p.이름, a.label) } },
       h('b', { text: a.label }), h('span', { className: 'chip num', text: a.ok ? (a.cost ? `${won(a.cost)} · 1칸` : '1칸') : '' }), a.ok ? null : lock(a.why)))),
-    h('button', { type: 'button', className: `btn ${cf.ok ? 'main' : ''}`, disabled: !cf.ok, on: { click: () => confirmSheet(ctx, `${p.이름}에게 고백한다`, cf.good ? '특별한 날이라 용기가 난다. 거절당하면 한동안 어색해진다.' : '거절당하면 한동안 어색해진다. 축제나 기념일에는 조금 더 용기가 난다.', '고백한다', () => crushRun(ctx, crush.confess(s, p.id), p.이름, '고백')) } },
+    h('button', { type: 'button', className: `btn ${cf.ok ? 'main' : ''}`, disabled: !cf.ok, on: { click: () => confirmSheet(ctx, `${p.이름}에게 고백한다`, cf.good ? '특별한 날이라 용기가 난다. 거절당하면 한동안 어색해진다.' : '거절당하면 한동안 어색해진다. 축제나 기념일에는 조금 더 용기가 난다.', '고백한다', () => crushRun(ctx, crush.confess(s, p.id), p.id, p.이름, '고백')) } },
       h('b', { text: '고백하기' }), cf.ok ? h('span', { className: 'chip', text: '1칸' }) : lock(cf.why)));
 }
 function teenPartner(ctx, P) {
   const s = ctx.s;
   const opts = crush.dateOptions(s);
   return h('section', { className: 'panel stack lv-partner' },
-    h('div', { className: 'row' }, teenAv(P.이름, 'big'), h('div', { className: 'lv-grow' },
+    h('div', { className: 'row' }, teenAv(P.id, P.이름, 'big'), h('div', { className: 'lv-grow' },
       h('div', { className: 'row lv-chips' }, h('span', { className: 'lv-tag', text: '사귀는 사이' }), P.hand ? h('span', { className: 'lv-tag first', text: '손을 잡은 사이' }) : null),
       h('h2', { text: P.이름 }), h('p', { className: 'small', text: [P.학교, P.months ? `사귄 지 ${P.months}달` : '오늘부터'].filter(Boolean).join(' · ') }), h('p', { className: 'small', text: P.mood }))),
     P.far ? h('p', { className: 'small lv-dim', text: '학교가 달라서 주말에만 볼 수 있다. 자주 연락하지 않으면 금방 멀어진다.' }) : null,
     P.pause ? h('p', { className: 'small lv-dim', text: '수능이 끝날 때까지 잠깐 쉬기로 했다.' }) : null,
     h('h3', { text: '데이트' }),
-    h('div', { className: 'grid2 lv-dates' }, opts.map((o) => h('button', { type: 'button', className: 'btn lv-date', disabled: !o.ok, on: { click: () => crushRun(ctx, crush.date(s, o.key), P.이름, o.label) } },
+    h('div', { className: 'grid2 lv-dates' }, opts.map((o) => h('button', { type: 'button', className: 'btn lv-date', disabled: !o.ok, on: { click: () => crushRun(ctx, crush.date(s, o.key), P.id, P.이름, o.label) } },
       h('b', { text: o.label }), h('span', { className: 'chip num', text: `${o.cost ? won(o.cost) : '돈 안 듦'} · 1칸` }), o.ok ? null : lock(o.why)))),
-    h('div', { className: 'grid2 lv-dates' }, ['talk', 'gift'].map((k) => ({ k, label: crush.actLabel(s, k), ...crush.canAct(s, P.id, k) })).filter((a) => !(a.k === 'gift' && /특별한 날/.test(a.why ?? ''))).map((a) => h('button', { type: 'button', className: 'btn lv-date', disabled: !a.ok, on: { click: () => crushRun(ctx, crush.act(s, P.id, a.k), P.이름, a.label) } }, h('b', { text: a.label }), a.ok ? h('span', { className: 'chip', text: '1칸' }) : lock(a.why)))));
+    h('div', { className: 'grid2 lv-dates' }, ['talk', 'gift'].map((k) => ({ k, label: crush.actLabel(s, k), ...crush.canAct(s, P.id, k) })).filter((a) => !(a.k === 'gift' && /특별한 날/.test(a.why ?? ''))).map((a) => h('button', { type: 'button', className: 'btn lv-date', disabled: !a.ok, on: { click: () => crushRun(ctx, crush.act(s, P.id, a.k), P.id, P.이름, a.label) } }, h('b', { text: a.label }), a.ok ? h('span', { className: 'chip', text: '1칸' }) : lock(a.why)))));
 }
 function crushScreen(ctx) {
   const s = ctx.s; crush.init(s);
@@ -337,7 +337,7 @@ function crushScreen(ctx) {
       d.other ? h('button', { type: 'button', className: 'btn', text: `${d.other}에 가 보기`, on: { click: () => ctx.go('place', { id: 'other' }) } }) : null) : null,
     d.people.length ? h('section', { className: 'stack' }, h('h3', { text: d.partner ? '알고 지내는 아이들' : '마음이 쓰이는 아이' }), d.people.map((p) => crushCard(ctx, p))) : null,
     d.open && d.other && (d.people.length || d.partner) ? h('button', { type: 'button', className: 'btn', text: `${d.other}에 가 보기 (축제·연합 동아리·학원)`, on: { click: () => ctx.go('place', { id: 'other' }) } }) : null,
-    d.memories.length ? h('section', { className: 'stack' }, h('h3', { text: '추억' }), d.memories.map((m) => h('div', { className: 'lv-pick' }, teenAv(m.이름), h('span', { className: 'lv-grow' }, h('b', { text: m.이름 }), h('span', { className: 'small lv-dim lv-block', text: [m.학교, END[m.end] ?? '', m.hand ? '처음 잡은 손' : ''].filter(Boolean).join(' · ') }))))) : null);
+    d.memories.length ? h('section', { className: 'stack' }, h('h3', { text: '추억' }), d.memories.map((m) => h('div', { className: 'lv-pick' }, teenAv(m.id, m.이름), h('span', { className: 'lv-grow' }, h('b', { text: m.이름 }), h('span', { className: 'small lv-dim lv-block', text: [m.학교, END[m.end] ?? '', m.hand ? '처음 잡은 손' : ''].filter(Boolean).join(' · ') }))))) : null);
 }
 
 export const screens = { love: loveScreen, family: familyScreen, crush: crushScreen };

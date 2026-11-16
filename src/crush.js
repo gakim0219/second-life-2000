@@ -2,7 +2,7 @@
 // 지킬 선(사용자 지시 2026-11-09)
 // - 상대는 지어낸 또래 학생뿐이다. 나와 한 살 차이 이내. 어른은 절대 후보가 아니다.
 // - 스킨십은 손잡기 한 번이 최고 단계다. 그 이상은 글로도 쓰지 않는다.
-// - 학생 때는 상대 사진을 쓰지 않는다(화면은 이니셜만). 고등학생 때만 열린다(중학교 연애는 사용자 지시로 폐기).
+// - 고등학생 때만 열린다(중학교 연애는 사용자 지시로 폐기). 화면은 고등학생 사진을 쓴다(이니셜만 쓰던 규칙은 사용자 지시 2026-11-16로 없앰).
 // - 성인이 되면 기록(history)이 love.js 동창 후보로 이어진다. 그때부터는 성인 사진만 쓴다.
 import { stageOf, tierOf, STRESS_MAX, raise } from './rules.js';
 import { enrolled, isVacation } from './school.js';
@@ -81,12 +81,17 @@ export function canBe(s, id, school) {
 }
 
 // ---------- 상태 ----------
+// 사이(bonds)에 '스친 인연'(3)으로 올린다. 이미 있으면 그대로 둔다.
+function known(s, id) { if ((s.bonds ??= {})[id] == null) { s.bonds[id] = 3; (s.bondSeen ??= {})[id] = s.year * 12 + s.month; } }
 export function init(s) {
   const C = (s.crush ??= {});
   C.people ??= {}; C.history ??= {}; C.cool ??= {}; C.pending ??= []; C.touched ??= {}; C.gifted ??= {}; C.diary ??= {};
   if (C.partner === undefined) C.partner = null;
   if (C.first === undefined) C.first = null;
   C.monthDates ??= 0;
+  // 만난 아이는 사람들 탭에도 보인다(사용자 지시 2026-11-16). 예전 저장도 여기서 맞춘다.
+  for (const id of Object.keys(C.people)) known(s, id);
+  if (C.partner?.id) known(s, C.partner.id);
   return C;
 }
 export const STEPS = [[0, '아는 애'], [20, '신경 쓰이는 애'], [40, '친한 사이'], [60, '썸']];
@@ -107,6 +112,7 @@ export function meet(s, id, route) {
   if (!canBe(s, id, schoolOf(id) ?? ownSchool(s))) return false;
   C.people[id] = { 마음: 8, 길: route ?? '같은 반', 학교: schoolOf(id) ?? ownSchool(s), at: yyyymm(s) };
   remember(s, id, '아는 애', { 학교: C.people[id].학교, 길: C.people[id].길 });
+  known(s, id);
   return true;
 }
 // 같은 학교 사람 가운데 아직 모르는 사람.

@@ -11,7 +11,9 @@ export function closeness(s, id) {
   if (s.partner?.id === id) return SITUATION_AT;
   // 호감은 25쯤에서 시작하므로 호감 단계(35·70)에 맞춰 읽는다.
   const love = s.love?.people?.[id]?.호감 ?? 0;
-  return Math.max(bondOf(s, id), love >= 70 ? SITUATION_AT : love >= 35 ? FAMILY_AT : 0);
+  // 풋풋한 마음: 사귀는 사이거나 친한 사이(40)면 집안 이야기를 듣는다.
+  const teen = s.crush?.partner?.id === id ? SITUATION_AT : (s.crush?.people?.[id]?.마음 ?? 0) >= 40 ? FAMILY_AT : 0;
+  return Math.max(bondOf(s, id), teen, love >= 70 ? SITUATION_AT : love >= 35 ? FAMILY_AT : 0);
 }
 // 자료가 없는 사람은 null. { family, situation, hint }
 export function friendInfo(s, id) {
@@ -20,7 +22,7 @@ export function friendInfo(s, id) {
   const c = closeness(s, id);
   const family = c >= FAMILY_AT ? d.family.filter((t) => ready(s, t)) : [];
   const situation = c >= SITUATION_AT ? d.situation.filter((t) => ready(s, t)) : [];
-  const hint = c < FAMILY_AT ? '더 친해지면 집안 이야기를 듣게 될 것 같다.' : c < SITUATION_AT ? '더 가까워지면 속사정도 털어놓을 것 같다.' : null;
+  const hint = c < FAMILY_AT ? '더 친해지면 집안 이야기를 듣게 될 것 같다.' : c < SITUATION_AT && d.situation.length ? '더 가까워지면 속사정도 털어놓을 것 같다.' : null;
   return { family, situation, hint };
 }
 // 방금 대화로 새로 알게 된 것을 한 줄로. before는 대화 전 friendInfo.

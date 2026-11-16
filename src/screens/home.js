@@ -21,18 +21,19 @@ import { showMet } from './love.js';
 import { friendHelps } from '../network.js';
 import { DISCLAIMER } from '../invest.js';
 import { openStat } from './stat.js';
+import { timesBar, doMany } from './times.js';
 import { abroadSheet } from './abroad.js';
 
 const ICON = { 공부: 'book', 운동: 'run', '과외 알바': 'case', 학교: 'school', 꾸미기: 'spark', '인맥 관리': 'people', 만남: 'heart', 플렉스: 'shop', 휴식: 'moon', 놀기: 'spark', '다른 학교': 'school' };
 const ROUTE = { 회사: 'company', 만남: 'love', 마음: 'crush' };
 let flash = new Set(); // 방금 달라진 칸. 다음 그리기 한 번만 반짝인다.
 
-function run(ctx, id, close) {
+function run(ctx, id, close, many = true) {
   const s = ctx.s, before = { ...s.stats }, cash = s.cash, tired = s.stress;
   if (id === 'ab_status') { close?.(); abroadSheet(ctx, s); return; }
   if (id === 'shop_help') { close?.(); openCashier(ctx, (r) => after(ctx, r, before, cash, tired)); return; }
   if (id === 'play_karaoke') { close?.(); openKaraoke(ctx, (r) => { if (!r.ok) { ctx.toast(r.why); return; } after(ctx, r, before, cash, tired); }); return; }
-  const r = doAction(s, id);
+  const r = many ? doMany(s, id) : doAction(s, id);
   if (!r.ok) { ctx.toast(r.why); return; }
   close?.();
   after(ctx, r, before, cash, tired);
@@ -67,6 +68,7 @@ function openGroup(ctx, g) {
     return h('div', { className: 'stack' },
       h('div', { className: 'row between' }, h('h2', { text: g.label }), h('button', { className: 'sheet-x', 'aria-label': '닫기', text: '✕', on: { click: close } })),
       h('p', { className: 'sub', text: b.slotsLeft > 0 ? `남은 활동 칸 ${b.slotsLeft}개` : '이번 달 칸을 다 썼습니다.' }),
+      timesBar(),
       list.length ? branches.map((br) => h('div', { className: 'stack' }, br ? h('h3', { text: FLEX_BRANCH_ICON[br] ? `${FLEX_BRANCH_ICON[br]} ${br}` : br }) : null, list.filter((a) => a.branch === br).map((a) => actionBtn(ctx, a, close)))) : h('p', { className: 'sub', text: '지금 할 수 있는 일이 없습니다.' }));
   });
 }
@@ -94,6 +96,11 @@ function bundleSheet(ctx, helps) {
     todoPanel(ctx, ctx.s, close),
     helps.length ? h('button', { className: 'btn sun', text: `도울 수 있는 동창 ${helps.length}명`, on: { click: () => { close(); ctx.go('people'); } } }) : null));
 }
+// 내 사진을 화면 가득 본다. 아무 데나 누르면 닫힌다.
+function zoomMe(s) {
+  const el = h('button', { className: 'me-zoom', 'aria-label': '사진 닫기', on: { click: () => el.remove() } }, mePic(s));
+  document.body.append(el);
+}
 function home(ctx) {
   const s = ctx.s;
   if (s.ended) { setTimeout(() => ctx.go('ending', {}, { replace: true })); return h('div'); }
@@ -107,7 +114,7 @@ function home(ctx) {
   const el = h('div', { className: 'home' },
     h('section', { className: 'h-hero' },
       backdrop(s, 'home'), h('span', { className: 'h-shade', 'aria-hidden': 'true' }),
-      h('div', { className: 'h-who' }, h('span', { className: 'h-face' }, mePic(s)),
+      h('div', { className: 'h-who' }, h('button', { className: 'h-face', 'aria-label': '내 사진 크게 보기', on: { click: () => zoomMe(s) } }, mePic(s)),
         h('div', { className: 'h-id' }, h('b', { text: s.name }), h('small', { className: 'num', text: `${b.age}살 · ${stage} · ${s.year}. ${String(s.month).padStart(2, '0')}` }))),
       h('button', { className: `h-money${flash.has('cash') ? ' flash' : ''}${Math.max(Math.abs(s.cash), p.assets, Math.abs(p.netWorth)) >= 1e12 ? ' long' : ''}`, 'aria-label': '자산 보기', on: { click: () => { ctx.stack.length = 0; goSafe(ctx, 'invest'); } } },
         [['현금', s.cash], ['자산', p.assets], p.debt > 0 ? ['부채', -p.debt] : null, ['순자산', p.netWorth]].filter(Boolean).map(([t, v]) => h('span', { className: t === '순자산' ? 'h-net' : '' }, h('i', { text: t }), h('b', { className: 'num', text: won(v) })))),
@@ -121,6 +128,7 @@ function home(ctx) {
     b.tiredFull ? h('p', { className: 'small h-warnline', text: '피곤함이 100입니다. 다음 달 활동 칸이 절반으로 줄어듭니다.' }) : null,
     full && canRefill(s) ? h('button', { className: 'btn main h-refill', text: '활동 칸 1개 무료 충전 (한 달에 한 번)', on: { click: () => { const r = refill(s); ctx.save(); ctx.toast(r.ok ? r.text : r.why); ctx.draw(); } } }) : null,
     full && !canRefill(s) ? h('p', { className: 'small h-full', text: '칸을 다 썼습니다. 이번 달 무료 충전도 썼습니다. 다음 달로 넘어가세요.' }) : null,
+    timesBar(),
     h('div', { className: 'h-acts' }, all.map((g) => h('button', { className: `h-act${!g.open ? ' locked' : ''}`, on: { click: () => openGroup(ctx, g) } },
       icon(g.open ? ICON[g.name] ?? 'spark' : 'lock', 'h-ico'), h('b', { className: 'h-lbl', text: g.label })))),
     s.queue.length ? h('button', { className: 'h-story', on: { click: () => { deferScenes(false); resumeFlow(ctx); } } }, h('span', { className: 'qdot', 'aria-hidden': 'true' }), h('b', { text: `미룬 이야기 ${s.queue.length}개 보기` }), h('em', { 'aria-hidden': 'true', text: '›' })) : null,

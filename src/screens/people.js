@@ -452,7 +452,7 @@ function renderAlbum(ctx) {
     h('div', { className: 'section-heading' }, h('span', { className: 'eyebrow', text: 'MEMORIES OF TOMORROW' }), h('h1', { text: '회귀자의 기억' }), h('p', { text: `지나온 이야기 ${s.seen.length}편 · ${calendar(s).label}` })),
     h('div', { className: 'row rn-row' },
       h('button', { className: 'p-link', on: { click: () => ctx.go('paper', { peek: true }) } }, icon('news'), h('span', {}, h('small', { text: `${s.year}년 ${s.month}월호` }), h('b', { text: '이달의 신문' })), h('em', { 'aria-hidden': 'true', text: '›' })),
-      h('button', { className: 'rn-btn', on: { click: () => noteSheet(ctx, s) } }, icon('book'), h('span', { text: '회귀노트' }))),
+      isAdmin() ? h('button', { className: 'rn-btn', on: { click: () => noteSheet(ctx, s) } }, icon('book'), h('span', { text: '회귀노트' })) : null),
     h('div', { className: 'tabs' }, ['이야기', '이정표', '목표', '기억', '뉴스'].map((t) => h('button', { 'aria-pressed': String(t === albumTab), text: t === '이야기' ? '이야기 앨범' : t === '뉴스' ? '뉴스 스크랩' : t, on: { click: () => pick(t) } }))),
     albumBody(ctx, s));
 }

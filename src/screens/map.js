@@ -12,6 +12,7 @@ import { showMet } from './love.js';
 import { openCashier, openKaraoke, nextBar, kinCard } from './common.js';
 import { officeStaff, islandPeople, islandProfile } from '../../data/events_island.js';
 import { icon } from './icons.js';
+import { timesBar, doMany } from './times.js';
 import { face, heartsEl, mateMark, crowd, nameOf, tagOf, photoOf, PLACE_NAME } from './people.js';
 
 // ───────── 지도 자료 ─────────
@@ -328,7 +329,7 @@ function actionRow(ctx, s, a, placeId) {
     if (a.id === 'ab_status') { abroadSheet(ctx, s); return; }
     if (a.id === 'shop_help') { openCashier(ctx, (r) => { if (!r.ok) { ctx.toast(r.why); return; } ctx.toast(said(r)); ctx.refresh(); }); return; }
     if (a.id === 'play_karaoke') { openKaraoke(ctx, (r) => { if (!r.ok) { ctx.toast(r.why); return; } ctx.toast(said(r)); ctx.refresh(); }); return; }
-    const r = doAction(s, a.id);
+    const r = doMany(s, a.id);
     if (!r.ok) { ctx.toast(r.why); return; }
     if (r.route) {
       if (r.route.tab === '회사') ctx.go('company');
@@ -426,6 +427,7 @@ function renderPlace(ctx, params = {}) {
     h('section', { className: 'stack' }, h('h2', { text: `${place.name}에서 할 일` }),
       branches.length > 1 ? h('div', { className: 'tabs' }, branches.map((b) => h('button', { 'aria-pressed': String(b === tab), text: FLEX_BRANCH_ICON[b] ? `${FLEX_BRANCH_ICON[b]} ${b}` : b, on: { click: () => { flexTabs[id] = b; ctx.go('place', params, { replace: true }); } } }))) : null,
       tab === '소유' ? ownedPanel(ctx, s, id) : null,
+      acts.some((a) => !a.route && !a.free) ? timesBar() : null,
       acts.length ? h('div', { className: 'stack acts' }, acts.map((a) => actionRow(ctx, s, a, id))) : h('p', { className: 'sub', text: '이번 달에 여기서 할 일은 없다.' })),
     inSchool ? h('button', { className: 'btn', on: { click: () => reportSheet(ctx) } }, '성적표 보기') : null,
     inSchool && examPending(s) ? h('p', { className: 'sub', text: `이번 달 ${cal.exam}. 지금까지 공부한 만큼 성적이 나온다.` }) : null);

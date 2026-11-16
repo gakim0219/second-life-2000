@@ -46,11 +46,8 @@ export function seoulHomes(s) {
     return { id, name: inv.nameOfAt(id, s), region: a.region, size: a.sector ?? a.sub ?? '', price, old, pay, acq, gift, total, can: s.cash >= total };
   }).filter(Boolean).sort((x, y) => x.price - y.price);
 }
-// 부모님이 알게 되는 선(사용자 지시 2026-11-16): 30억, 또는 가장 싼 서울 집 값(세금 포함)의 3배. 둘 중 낮은 쪽.
-export function foundLine(s) {
-  const cheap = seoulHomes(s)[0];
-  return cheap ? Math.min(FOUND_LINE, cheap.total * 3) : FOUND_LINE;
-}
+// 부모님이 알게 되는 선: 순자산 30억(원래 규칙). 집값 3배로 낮췄던 것을 되돌렸다(사용자 지적 2026-11-16: 1억대에 알게 되는 것은 이르다).
+export const foundLine = () => FOUND_LINE;
 // 집은 몇 번이고 다시 옮길 수 있다(사용자 지시 2026-11-16). 어른이 되면 믿음 이야기 없이도 고를 수 있다.
 export const canChoose = (s) => !!s.flags.부모_믿음 || !minor(s);
 // 이사를 상의하기로 했으면 장면이 끝나고 바로 집 고르기로 넘어간다. 한 번만.

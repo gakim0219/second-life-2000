@@ -20,6 +20,7 @@ import { meet as crushMeet, otherSchool, studentsAt, homeSchool } from '../crush
 import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
+import { nextStory } from '../../data/events_bonds.js';
 import { SIS, sisName, sisAge, sisSchool, kinOptions, kinAct } from '../kin.js';
 
 // ───────── 인물 표 ─────────
@@ -149,6 +150,13 @@ function statusLine(s, id) {
   if (!out.length) out.push('요즘은 별다른 소식이 없다.');
   return out.join(' ');
 }
+// 친해지면 열리는 이야기까지 얼마나 남았는지. 숫자 대신 막대로 보여 준다.
+function storyLine(s, id) {
+  const n = nextStory(s, id); if (!n) return null;
+  if (n.done) return h('p', { className: 'small sub', text: '이 사람과의 중학교 이야기를 모두 보았다.' });
+  const bar = h('i'); bar.style.width = `${Math.min(100, Math.max(4, (n.have / n.need) * 100))}%`;
+  return h('div', { className: 'story-next' }, h('small', { text: n.ready ? `다음 이야기 ${n.n}/${n.total} · 다음 달에 열린다` : `다음 이야기 ${n.n}/${n.total} · 더 친해지면 열린다` }), h('span', { className: 'h-tiredbar', 'aria-hidden': 'true' }, bar));
+}
 function renderPerson(ctx, { id, here = false } = {}) {
   const s = ctx.s;
   const loved = (() => { try { return lovePeople(s).find((x) => x.person.id === id) ?? null; } catch { return null; } })();
@@ -219,6 +227,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
       named && isAdmin() ? h('p', { className: 'person-admin num', text: adminLine(s, id) }) : null,
       loved ? h('p', { text: likeText(s, id) }) : null,
       named ? h('p', { text: statusLine(s, id) }) : null,
+      named ? storyLine(s, id) : null,
     ),
     actions.length ? h('div', { className: 'stack person-actions' }, actions) : null);
 }

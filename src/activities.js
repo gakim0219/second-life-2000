@@ -139,7 +139,6 @@ const OTHER = [
     run: (s) => { up(s, '인맥', 1.2); if (s.club) s.club.exp += 1; return meetText(s, '연합 동아리', 0.6, '여러 학교 동아리가 모인 연합 모임에 나갔다. 다른 학교 아이들과 연습 일정을 맞추고 연락처를 주고받았다.'); } },
   { id: 'other_academy', group: '다른 학교', label: '학원 수업', cost: (s) => (stageOf(s) === '고등' ? 80000 : 50000), stress: 3, show: (s) => isOpen('다른 학교', stageOf(s)),
     run: (s) => { if (enrolled(s)) s.study = Math.min(100, s.study + studyGain(s) * 0.8); up(s, '지능', 1.4); return meetText(s, '학원', 0.45, '학원 수업을 들었다. 쉬는 시간에 다른 학교 아이들과 매점 앞에서 컵떡볶이를 먹었다.'); } },
-  { id: 'crush_open', group: '다른 학교', label: '풋풋한 마음 보기', show: (s) => isOpen('다른 학교', stageOf(s)), route: { tab: '마음' } },
 ];
 
 // ───────── 고등학교 동아리 연습 ─────────

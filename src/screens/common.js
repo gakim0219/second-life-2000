@@ -202,10 +202,13 @@ const homeList = (s) => [...homeBgs(s), SEASON_FILE[seasonOf(s.month)], 'home', 
 const workList = (s) => (stageOf(s) === '사회인' ? ['office1', 'wk-office'] : s.flags?.부모_찻집 ? ['tea-inside', 'tea-open', 'store'] : ['store']);
 const hallList = (p) => ['stage', ROOM.office[p]];
 // 키 -> 파일 후보 표. 키는 화면이 부르는 이름(지도, place_<id>, scene_<id>, 회사 사무실, 옛 장소 이름)이다.
+// 고등학교마다 다른 교내 지도(사용자 지시 2026-11-16). 서울고는 map-high를 그대로 쓴다.
+const HI_MAP = { 느티여고: 'map-high-girls', 서울과학고: 'map-high-science', 새길직업고: 'map-high-voc' };
 function bgListFor(s, key) {
   const p = s ? PRE[stageOf(s)] : 'el';
+  const hiMap = HI_MAP[s?.school?.고등];
   const fixed = {
-    map_town: ['map-town'], map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: ['map-high'], map_u: ['map-university'],
+    map_town: s && stageOf(s) === '고등' ? ['map-town-hi', 'map-town'] : ['map-town'], map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: hiMap ? [hiMap, 'map-high'] : ['map-high'], map_u: ['map-university'],
     office1: ['wk-office'], office2: ['wk-office'], office3: ['wk-office', 'un-club'],
     e_class: ['el-classroom'], m_class: ['mi-classroom'], h_class: ['hi-classroom'], u_class: ['un-classroom'],
     e_yard: ['el-yard'], m_yard: ['mi-yard'], h_yard: ['hi-yard'], u_yard: ['un-yard'],
@@ -219,7 +222,7 @@ function bgListFor(s, key) {
   const byPlace = {
     home: homeList(s), school: [ROOM.yard[p]],
     park: ['park', ROOM.yard[p]], work: workList(s), shop: [ROOM.shop[p], 'store'],
-    hill: ['isl-lobby', 'isl-office', 'office1'], cafe: ['cafe', 'un-club', 'store'], town: ['restaurant', 'lounge', 'moment-up', 'store'],
+    hill: ['isl-lobby', 'isl-office', 'office1'], other: ['other-school'], cafe: ['cafe', 'un-club', 'store'], town: ['restaurant', 'lounge', 'moment-up', 'store'],
     classroom: [ROOM.classroom[p]], lab: [ROOM.lab[p]], hall: scene ? hallList(p) : [ROOM.office[p]], ground: [ROOM.yard[p]], office: [ROOM.office[p]], library: [ROOM.library[p]],
   };
   if (key === 'scene' || key === 'home') return homeList(s);

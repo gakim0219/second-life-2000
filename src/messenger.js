@@ -2,7 +2,7 @@
 // 시기마다 쓰는 앱이 바뀐다. 한 달 3번까지 활동 칸을 쓰지 않고 연락한다. 사이는 직접 대화의 절반만 오른다.
 import { stageOf, ageOf, charmTalk, addStress } from './rules.js';
 import { personOf } from './network.js';
-import { bumpSmall, bondOf, knows, promise } from './bonds.js';
+import { bumpSmall, bondOf, knows, promise, mateOf } from './bonds.js';
 import { canAppear } from './cast.js';
 
 export const LIMIT = 3;
@@ -188,6 +188,48 @@ const REPLY = {
     far: ['이게 얼마 만이냐. 반갑다', '{me}구나! 잘 지냈니?'], cold: ['그래', '응, 그래'],
   },
 };
+// 사귀는 사람과 주고받는 글(사용자 지시 2026-11-16). 고등학생 때는 풋풋한 선을 지킨다.
+const MATE = {
+  teen: {
+    mine: {
+      hello: ['{n} 뭐 해? 그냥 생각나서', '집에 잘 들어갔어? 오늘 재밌었어', '야자 끝났어? 오늘 못 봐서 아쉽다', '잘 자. 내일 학교에서 보자'],
+      worry: ['나 오늘 좀 힘들었어. 너한테는 말하고 싶었어', '성적 때문에 걱정이야. 네 목소리 들으면 좀 나을 것 같아', '부모님이랑 좀 다퉜어… 그냥 네 생각이 났어'],
+      plan: ['주말에 같이 영화 볼래?', '시험 끝나면 둘이 놀러 가자', '토요일에 독서실 끝나고 떡볶이 먹자. 내가 살게'],
+    },
+    reply: {
+      hello: ['나도 방금 네 생각 했는데 ㅎㅎ', '응 잘 들어왔어. 너도 얼른 자', '나도 아쉬웠어. 내일은 꼭 보자', '{me}도 잘 자. 내 꿈 꿔 ㅋㅋ'],
+      worry: ['무슨 일인데? 다 말해 줘. 끝까지 들을게', '괜찮아. 너 잘하고 있어. 내가 알아', '내일 만나서 얘기하자. 초콜릿 가져갈게'],
+      plan: ['좋아! 벌써 기다려진다', '응 약속이야. 그날 비워 둘게', '완전 좋아 ㅎㅎ 뭐 입고 가지'],
+    },
+    far: ['{me}… 왜 이제 연락해. 기다렸잖아', '진짜 오랜만이다. 나 잊은 줄 알았어'],
+  },
+  lover: {
+    mine: {
+      hello: ['{n}, 밥은 먹었어?', '오늘 하루 어땠어? 보고 싶다', '퇴근했어? 조심히 들어가', '자기 전에 목소리 듣고 싶어서'],
+      worry: ['나 오늘 좀 지쳤어. 네 생각이 제일 먼저 나더라', '요즘 고민이 있는데 너랑 얘기하고 싶어', '별일은 아닌데 마음이 좀 가라앉네'],
+      plan: ['이번 주말에 데이트하자', '다음 달에 어디 좀 다녀올까? 둘이서', '금요일 저녁 비워 둬. 맛있는 거 먹자'],
+    },
+    reply: {
+      hello: ['나도 보고 싶어. 오늘 유난히', '방금 먹었어. 너는? 거르지 마', '응 이제 집이야. 전화할까?', '나도 네 목소리 듣고 싶었어'],
+      worry: ['무슨 일이야? 지금 전화해도 돼?', '고생했어. 오늘은 아무 생각 말고 쉬어. 내가 옆에 있잖아', '주말에 만나서 천천히 얘기하자. 맛있는 거 사 줄게'],
+      plan: ['좋아! 어디 갈지 내가 찾아볼게', '응, 벌써 설렌다', '당연히 비워 두지. 기대할게'],
+    },
+    far: ['연락이 너무 뜸했잖아. 걱정했어', '이제야 연락하네. 그래도 반갑다'],
+  },
+  spouse: {
+    mine: {
+      hello: ['{n}, 점심은 챙겨 먹었어?', '오늘 좀 늦을 것 같아. 먼저 먹어', '퇴근길에 뭐 사 갈까?', '오늘도 고생 많아. 저녁에 봐'],
+      worry: ['오늘 회사에서 좀 힘들었어. 집에 가서 얘기할게', '요즘 고민이 있는데 저녁에 시간 좀 내 줘', '당신한테만 하는 얘긴데 좀 지치네'],
+      plan: ['주말에 둘이 바람 쐬러 갈까?', '다음 달에 하루 날 잡아서 외식하자', '이번 기념일에는 어디 좀 다녀오자'],
+    },
+    reply: {
+      hello: ['응 먹었어. 당신은?', '알았어. 조심히 와', '과일 좀 사 와. 고마워', '당신도 고생해. 저녁에 맛있는 거 해 놓을게'],
+      worry: ['무슨 일인데. 일찍 와, 얘기 들어 줄게', '너무 혼자 끌어안지 마. 같이 생각해 보자', '오늘은 푹 쉬어. 집안일은 내가 할게'],
+      plan: ['좋지. 오랜만이네', '그래, 내가 예약해 둘게', '좋아. 그날은 일 얘기 하지 말자'],
+    },
+    far: ['연락이 왜 이렇게 없었어', '바빴구나. 그래도 가끔은 연락해'],
+  },
+};
 const ABROAD = ['여기 지금 새벽이야 ㅋㅋ 그래도 반가워', '시차 때문에 늦게 봤다. 한국 그립다', '여기 있으니까 이런 연락이 제일 반가워'];
 const pick = (s, id, salt, list) => list[hash(`${s.seed ?? 1}:${s.year}:${s.month}:${id}:${salt}`) % list.length];
 const fill = (t, n, me) => t.replaceAll('{n}', n).replaceAll('{me}', me);
@@ -210,6 +252,11 @@ export function speechOf(s, id) {
 }
 export function lines(s, id, app, act, { name = '', me = '나', abroad = false } = {}) {
   const v = bondOf(s, id), gap = gapOf(s, id);
+  const L = MATE[mateOf(s, id)];
+  if (L) { // 내 글과 답은 같은 번호끼리 짝이다.
+    const i = pick(s, id, 'me', L.mine[act].map((_, k) => k));
+    return { mine: fill(L.mine[act][i], name, me), reply: fill(gap != null && gap >= 24 ? pick(s, id, 're', L.far) : L.reply[act][i], name, me) };
+  }
   const band = speechOf(s, id), plain = BANDS.includes(band);
   const mine = fill(pick(s, id, 'me', [...MINE[band][act], ...(plain ? APP_EXTRA[app]?.[act] ?? [] : [])]), name, me);
   const R = REPLY[band];

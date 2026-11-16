@@ -71,6 +71,8 @@ const ageGapOK = (s, id) => Math.abs((infoOf(id)?.출생연도 ?? 0) - (s.birthY
 // 한 학년 아래 후배는 다음 해 3월에 들어온다.
 const START = { c107: 200603, c118: 200603 };
 const inWindow = (s, id, school) => { const end = WINDOW[`${id}@${school}`]; return (!end || yyyymm(s) <= end) && yyyymm(s) >= (START[id] ?? 0); };
+// 이웃 학교에 지금 다니는 아이들(전학·졸업·입학 시기를 본다). 동네 지도의 이웃 학교에 보인다.
+export const studentsAt = (s, school) => (POOL[school] ?? []).filter((id) => inWindow(s, id, school));
 // 후보 조건. 모든 만남이 이 함수를 거친다.
 export function canBe(s, id, school) {
   const p = infoOf(id);
@@ -105,12 +107,14 @@ function remember(s, id, best, extra = {}) {
 const say = (s, t) => { (s.log ??= []).push(t); };
 
 // 만난다(아는 사이로 올린다). 이미 아는 사람이면 아무것도 하지 않는다.
-export function meet(s, id, route) {
+// school: 이웃 학교에서 말을 텄을 때 그 학교 이름. 없으면 새 인물의 학교나 내 학교.
+export function meet(s, id, route, school) {
   init(s);
   const C = s.crush;
   if (C.people[id] || C.history[id]?.ended) return false;
-  if (!canBe(s, id, schoolOf(id) ?? ownSchool(s))) return false;
-  C.people[id] = { 마음: 8, 길: route ?? '같은 반', 학교: schoolOf(id) ?? ownSchool(s), at: yyyymm(s) };
+  const at = schoolOf(id) ?? school ?? ownSchool(s);
+  if (!canBe(s, id, at)) return false;
+  C.people[id] = { 마음: 8, 길: route ?? '같은 반', 학교: at, at: yyyymm(s) };
   remember(s, id, '아는 애', { 학교: C.people[id].학교, 길: C.people[id].길 });
   known(s, id);
   return true;

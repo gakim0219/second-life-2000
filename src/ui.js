@@ -50,7 +50,10 @@ function withUrl(path, fn) {
 // 화면이 부르는 장소 키를 실제 파일 이름 후보로 바꾸는 표. src/screens/common.js가 넣는다.
 let bgTable = (key) => [key];
 export const setBgTable = (fn) => { bgTable = fn; };
-const firstBg = (key) => (Array.isArray(key) ? key : bgTable(key)).find((k) => ART.bg.includes(k)) ?? null;
+// 파일 이름 하나를 후보 여러 개로 넓힌다(학교마다 다른 그림). src/screens/common.js가 넣는다.
+let bgAlias = (k) => [k];
+export const setBgAlias = (fn) => { bgAlias = fn; };
+const firstBg = (key) => (Array.isArray(key) ? key : bgTable(key)).flatMap((k) => bgAlias(k)).find((k) => ART.bg.includes(k)) ?? null;
 export const hasBg = (key) => !!firstBg(key);
 export const hasMe = (key) => ART.me.includes(key);
 // 인물 폴더의 장면 그림(예: 호텔). 사람 사진이 아니라 배경으로만 쓴다. 없으면 null.

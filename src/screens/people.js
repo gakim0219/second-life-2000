@@ -16,7 +16,7 @@ import { newsScrap, visibleHints, pastMemories } from '../paper.js';
 import { regressionNote, noteYears, halfNote, HALF_FROM, DISCLAIMER } from '../invest.js';
 import { kinCard } from './common.js';
 import { crushSection } from './love.js';
-import { meet as crushMeet } from '../crush.js';
+import { meet as crushMeet, otherSchool, studentsAt } from '../crush.js';
 import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
@@ -37,7 +37,7 @@ const isKin = (id) => isParent(id) || id === '부모님';
 // 쪽지·하교는 또래끼리만 어울린다.
 const isPeer = (id) => /^c\d/.test(id);
 
-export const PLACE_NAME = { home: '집', park: '공원', work: '일터', school: '학교', shop: '상가', cafe: '카페', town: '번화가', classroom: '교실', lab: '특별실', hall: '강당', ground: '운동장', hill: '광화문 사무소' };
+export const PLACE_NAME = { other: '이웃 학교', home: '집', park: '공원', work: '일터', school: '학교', shop: '상가', cafe: '카페', town: '번화가', classroom: '교실', lab: '특별실', hall: '강당', ground: '운동장', hill: '광화문 사무소' };
 export const nameOf = (id) => (isKin(id) ? id : schoolNameOf(id) ?? netPerson(id)?.이름 ?? lovePerson(id)?.이름 ?? id);
 // 지금 시기에 가장 가까운 사진. 고르는 규칙은 ui.photo에 있다.
 export const photoOf = (id, s) => (isParent(id) ? kinCard(id, stageOf(s)) : id === '부모님' ? null : photo(id, stageOf(s)));
@@ -48,6 +48,7 @@ export function tagOf(s, id) {
   for (const r of list) if (r[id] !== undefined) return r[id] || '같은 반';
   // 풋풋한 마음에서 알게 된 다른 학교 아이.
   const teen = s.crush?.history?.[id]?.학교; if (teen) return teen === s.school?.고등 ? '같은 학교' : teen;
+  const next = stageOf(s) === '고등' ? otherSchool(s) : null; if (next && studentsAt(s, next).includes(id)) return next; // 이웃 학교에서 본 얼굴
   const n = netPerson(id);
   if (n) return n.분류 === '동창' ? '동창' : n.분류 === '동네' ? '동네 어른' : n.세부 ?? n.분류;
   return lovePerson(id) ? '아는 사람' : isTeacher(id) ? '선생님' : '아는 사람';
@@ -86,8 +87,15 @@ export function crowd(s) {
     const fresh = here.filter((id) => s.bonds?.[id] == null && hasPhoto(id)).sort((a, b) => hash(`${s.year}${s.month}${a}`) - hash(`${s.year}${s.month}${b}`)).slice(0, 3);
     for (const id of [...known, ...fresh]) add(seat(id, isTeacher(id) ? ['hall', 'classroom', 'lab'] : ['classroom', 'ground', 'lab', 'hall']), id);
   }
+  // 이웃 학교(사용자 지시 2026-11-16): 학기 중에는 그 학교 아이들이 보인다. 아는 아이는 모두, 모르는 얼굴은 달마다 몇 명.
+  const next = stageOf(s) === '고등' && !isVacation(s) ? otherSchool(s) : null;
+  const there = next ? studentsAt(s, next).filter((id) => shown(s, id) && !abroadOf(s, id)) : [];
+  if (next) {
+    const fresh = there.filter((id) => s.bonds?.[id] == null && hasPhoto(id)).sort((a, b) => hash(`${s.year}${s.month}${a}`) - hash(`${s.year}${s.month}${b}`)).slice(0, 3);
+    for (const id of [...there.filter((id) => s.bonds?.[id] != null), ...fresh]) add('other', id);
+  }
   const spots = placesOf(s).filter((p) => p.open && ['park', 'cafe', 'town', 'shop'].includes(p.id)).map((p) => p.id);
-  const away = Object.keys(s.bonds ?? {}).filter((id) => !isKin(id) && !(atSchool && here.includes(id)) && (s.bonds[id] ?? 0) >= 1 && shown(s, id) && !abroadOf(s, id) && timeOk(id, s) && (atSchool || !isTeacher(id)))
+  const away = Object.keys(s.bonds ?? {}).filter((id) => !isKin(id) && !there.includes(id) && !(atSchool && here.includes(id)) && (s.bonds[id] ?? 0) >= 1 && shown(s, id) && !abroadOf(s, id) && timeOk(id, s) && (atSchool || !isTeacher(id)))
     .sort((a, b) => s.bonds[b] - s.bonds[a]).slice(0, 6);
   if (spots.length) for (const id of away) add(seat(id, spots), id);
   return out;
@@ -137,6 +145,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
   const act = (r) => {
     if (!r.ok) { ctx.toast(r.why); return; }
     if (isPeer(id) && ROSTER[s.school?.[stageOf(s)]]?.[id] !== undefined) crushMeet(s, id, '같은 반');
+    else if (isPeer(id) && where === 'other') crushMeet(s, id, '이웃 학교', otherSchool(s));
     const opened = learnedNow(s, id, before) ?? profileLearned(s, id, beforeP);
     ctx.toast(opened ? `${r.text} ${opened}` : r.text);
     ctx.refresh();
@@ -181,7 +190,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
       h('div', { className: 'stack person-head' },
         h('div', { className: 'person-title' }, h('div', { className: 'person-name' }, h('h1', { text: named ? nameOf(id) : '처음 보는 얼굴' }), named ? detailBtn(ctx, s, id) : null),
           named && fullOk(s, id) && fullPhoto(id, stageOf(s)) ? h('button', { className: 'person-fullbtn', on: { click: () => ctx.sheet((close) => h('div', { className: 'stack person-fullsheet' }, h('div', { className: 'person-full' }, fullPhoto(id, stageOf(s))), h('button', { className: 'btn', on: { click: close } }, '닫기'))) } }, '전신 보기') : null),
-        named ? h('p', { className: 'sub', text: loved?.관계 ?? tagOf(s, id) }) : h('p', { className: 'sub', text: '같은 학교에서 자주 마주친다.' })),
+        named ? h('p', { className: 'sub', text: loved?.관계 ?? tagOf(s, id) }) : h('p', { className: 'sub', text: where === 'other' ? `${otherSchool(s) ?? '이웃 학교'}에서 마주친 얼굴이다.` : '같은 학교에서 자주 마주친다.' })),
       named && !loved?.person?.연애 ? h('div', { className: 'row wrap' }, heartsEl(v.hearts), h('span', { className: 'person-stage', text: v.label })) : null,
       named && isAdmin() ? h('p', { className: 'person-admin num', text: adminLine(s, id) }) : null,
       loved ? h('p', { text: likeText(s, id) }) : null,

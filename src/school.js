@@ -9,9 +9,9 @@ const VACATION = {
   고등: { months: [1, 8], summer: '7/17~8/18', winter: '12/28~2/5' },
   대학: { months: [1, 2, 7, 8], summer: '6월 하순~8월 말', winter: '12월 하순~2월 말' },
 };
-const isMit = (s) => s.school?.대학 === 'MIT';
+const isMit = (s) => s.school?.대학 === 'NIT';
 export const inArmy = (s) => !!s.flags?.군입대 && !s.flags?.전역;
-// 학생인가: MIT는 2008.9 입학, 복무 중은 학교에 없다.
+// 학생인가: NIT는 2008.9 입학, 복무 중은 학교에 없다.
 export function enrolled(s) {
   const st = stageOf(s);
   if (st === '사회인') return false;
@@ -64,13 +64,13 @@ function isTermStart(s) {
 // 등록금은 실제 개강 달에 낸다.
 const isTuitionMonth = (s) => (isMit(s) ? [2, 9] : [3, 9]).includes(s.month);
 // 지능이 높을수록 빨리 오른다(사용자 지시 2026-11-16): 60에서 1배, 120에서 1.5배, 200에서 2배. 사이는 고르게 잇는다.
-// 회귀한 어른 머리라 초등 과정은 2배, 중학 과정은 1.5배로 쉽다. 고등부터는 그대로다. 서울대·MIT는 폭이 조금 작다.
+// 회귀한 어른 머리라 초등 과정은 2배, 중학 과정은 1.5배로 쉽다. 고등부터는 그대로다. 한성대·NIT는 폭이 조금 작다.
 const STUDY_BASE = 6, STAGE_EASE = { 초등: 2, 중학: 1.5 };
 const iqRate = (v) => (v <= 60 ? 1 : v <= 120 ? 1 + (v - 60) / 120 : Math.min(2, 1.5 + (v - 120) / 160));
 export function studyGain(s) {
   const st = stageOf(s);
   let g = STUDY_BASE * iqRate(s.stats.지능) * (STAGE_EASE[st] ?? 1);
-  if (st === '대학' && ['서울대', 'MIT'].includes(s.school?.대학)) g *= 0.8;
+  if (st === '대학' && ['한성대', 'NIT'].includes(s.school?.대학)) g *= 0.8;
   if (st === '대학' && s.flags?.['수강:많이']) g *= 1.2;
   if (st === '대학' && s.flags?.['수강:적게']) g *= 0.8;
   return g;
@@ -156,14 +156,14 @@ function archiveTerm(s, stage) {
   s.terms.push({ stage, year: s.termExams[0].year, term: last.term, percent: avg, exams: s.termExams, grade: stage === '중학' || stage === '고등' ? gradeOf(avg) : null, rank: last.rank, gpa: last.gpa });
   s.termExams = [];
 }
-// 고교 3년 공부 평균. 서울대 보조 기록에 쓴다. 기록이 없으면 지금 %를 본다.
+// 고교 3년 공부 평균. 한성대 보조 기록에 쓴다. 기록이 없으면 지금 %를 본다.
 export function studyAvg(s) {
   const list = (s.terms ?? []).filter((t) => t.stage === '고등');
   if (!list.length) return s.study;
   return list.reduce((a, b) => a + b.percent, 0) / list.length;
 }
 // ───────── 등록금 (임시값) ─────────
-const TUITION = { 서울대: 2500000, MIT: 20000000, 한빛대: 3800000, 새길실무대: 2900000 };
+const TUITION = { 한성대: 2500000, NIT: 20000000, 태산대: 3800000, 신라전문대: 2900000 };
 function payTuition(s) {
   const due = TUITION[s.school?.대학];
   if (!due) return;
@@ -185,8 +185,8 @@ export function rollTerm(s, before, after) {
     delete s.flags?.학사경고;
   }
   if (changed) { s.fame = 0; s.pair = null; s.stageStats = null; }
-  // 새길실무대는 2년제다. 남자는 입대 뒤 2012년에 사회로 나간다.
-  if (after === '대학' && changed && s.school?.대학 === '새길실무대') s.graduateYear = s.sex === '남' ? 2012 : 2010;
+  // 신라전문대는 2년제다. 남자는 입대 뒤 2012년에 사회로 나간다.
+  if (after === '대학' && changed && s.school?.대학 === '신라전문대') s.graduateYear = s.sex === '남' ? 2012 : 2010;
   if (after === '대학' && enrolled(s) && isTuitionMonth(s)) payTuition(s);
 }
 // 성적표 화면 자료.

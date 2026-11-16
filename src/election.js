@@ -13,7 +13,7 @@ const HS_NAMES = {
 };
 const hsNames = (s) => HS_NAMES[s.school?.고등] ?? HS_NAMES.새길특성화고;
 const univNames = (s) => {
-  if (s.school?.대학 === 'MIT') return [['Daniel Park', 'Priya Shah'], ['Sarah Lin', 'Tom Reed']];
+  if (s.school?.대학 === 'NIT') return [['Daniel Park', 'Priya Shah'], ['Sarah Lin', 'Tom Reed']];
   const head = s.sex === '여' && s.pair?.name !== '문혜원' ? '문혜원' : '이건우'; // 문혜원이 내 짝이면 상대 조에 두지 않는다
   return [[head, '권태민'], ['신예린', '서하린']];
 };
@@ -39,7 +39,7 @@ export function scoreOf(s, key = raceKeyOf(s)) {
 }
 // 옛 저장의 짝은 이름 없이 id만 있다. 혼자 등록한 옛 저장은 소개받은 친구와 나간 것으로 보여 준다.
 const PAIR_NAME = { c01: '정민혁', c04: '김혜린', c06: '이소영', c11: '임재민', c14: '노현우', c17: '엄주희', c20: '조대호', c21: '양미래', c26: '탁경민', c34: '남궁찬', c38: '마수정', c40: '오세라', c44: '국은채', c59: '문혜원', c82: 'Marcus' };
-const MATE = { 초6: () => '배지호', 중2: () => '곽민서', 고2: (s) => ({ 한빛고: '유재원', 푸른여고: '신아름', 한빛과학고: '정하민' }[s.school?.고등] ?? '나유찬'), 대학: (s) => (s.school?.대학 === 'MIT' ? 'Alex Kim' : '고승현') };
+const MATE = { 초6: () => '배지호', 중2: () => '곽민서', 고2: (s) => ({ 한빛고: '유재원', 푸른여고: '신아름', 한빛과학고: '정하민' }[s.school?.고등] ?? '나유찬'), 대학: (s) => (s.school?.대학 === 'NIT' ? 'Alex Kim' : '고승현') };
 const OLD_GENERIC = ['반 친구', '과 동기'];
 function mateName(s, key) {
   const n = s.pair?.name;

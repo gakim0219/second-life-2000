@@ -207,7 +207,7 @@ const hallList = (p) => ['stage', ROOM.office[p]];
 const HI_MAP = { 푸른여고: 'map-high-girls', 한빛과학고: 'map-high-science', 새길특성화고: 'map-high-voc' };
 // 교실·도서관 같은 고등학교 안 그림도 학교마다 다르다. hi-classroom → hi-classroom-girls. 없으면 원래 그림.
 const HI_SFX = { 푸른여고: 'girls', 한빛과학고: 'science', 새길특성화고: 'voc' };
-const UN_MAP = { MIT: 'map-university-mit', 한빛대: 'map-university-hanbit', 새길실무대: 'map-university-saegil' };
+const UN_MAP = { NIT: 'map-university-mit', 태산대: 'map-university-hanbit', 신라전문대: 'map-university-saegil' };
 setBgAlias((k) => { const s = appCtx.s, sfx = s && stageOf(s) === '고등' ? HI_SFX[s.school?.고등] : null; return sfx && k.startsWith('hi-') ? [`${k}-${sfx}`, k] : [k]; });
 // 동네 지도. 가족이 아파트로 옮겼으면 집 자리가 아파트인 그림을 먼저 찾는다(사용자 지시 2026-11-16).
 function townMaps(s, seoulNext) {
@@ -244,7 +244,7 @@ setBgTable((key) => bgListFor(appCtx.s, key));
 const EVENT_BG = [
   [/설날|세배/, () => ['ev-seollal', 'home-winter']], [/추석|송편/, () => ['ev-chuseok', 'home-autumn']], [/크리스마스|성탄/, () => ['ev-christmas', 'home-winter']],
   [/운동회|체육대회|계주|이어달리기|달리기/, (p) => ['ev-sports', ROOM.yard[p]]], [/입학|새 학교|첫날|개강/, (p) => ['ev-entrance', ROOM.classroom[p]]], [/졸업/, (p) => ['ev-graduation', ROOM.yard[p]]],
-  [/결혼|청혼|웨딩/, () => ['wedding', 'ev-graduation', 'home-apt']], [/입대|군대|복무|훈련소|전역|휴가 나온/, () => ['army', 'hi-yard']], [/MIT/, () => ['mit', 'un-yard']],
+  [/결혼|청혼|웨딩/, () => ['wedding', 'ev-graduation', 'home-apt']], [/입대|군대|복무|훈련소|전역|휴가 나온/, () => ['army', 'hi-yard']], [/NIT/, () => ['mit', 'un-yard']],
   [/골프/, () => ['golf', 'un-yard']], [/전시|미술관|갤러리/, () => ['gallery', 'un-club']], [/요트|마리나/, () => ['marina', 'moment-up']], [/무대|공연|콘서트|축제|학예회/, (p) => ['stage', ROOM.lab[p]]],
 ];
 const WORD_BG = [

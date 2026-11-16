@@ -202,7 +202,7 @@ function lockReason(s) {
   const st = stageOf(s);
   if (inArmy(s)) return '복무 중에는 학교에 없다. 전역하면 다시 돌아온다.';
   if (st === '사회인') return '학교를 졸업했다. 지금은 회사와 동네에서 지낸다.';
-  if (!enrolled(s)) return st === '대학' && s.school?.대학 === 'MIT' ? '2008년 9월에 입학한다. 그때까지는 동네에서 지낸다.' : '지금은 학교에 다니지 않는다.';
+  if (!enrolled(s)) return st === '대학' && s.school?.대학 === 'NIT' ? '2008년 9월에 입학한다. 그때까지는 동네에서 지낸다.' : '지금은 학교에 다니지 않는다.';
   return null;
 }
 function pinButton({ ctx, s, x, y, label, ids, stories, lock, why, go }) {

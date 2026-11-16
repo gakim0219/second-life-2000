@@ -1,15 +1,15 @@
 // 미국 대학 유학 준비(사용자 지시 2026-11-09).
 // - 고등학교에 다니면 학교와 상관없이 고1(2005년 4월 설명회)부터 시작할 수 있다. 수능 준비와 함께 한다.
 // - 준비: 토플·SAT(시험 달에 응시, 가장 좋은 점수를 쓴다), 활동 기록(대회·학생회·캠프·봉사), 에세이, 추천서(담당 선생님과의 사이).
-// - 조기 지원(2007.11.1)은 MIT 한 곳. 정규 지원(2008.1.1)은 MIT와 지어낸 미국 대학 네 곳. 결과는 2007.12, 2008.3.
-// - 실제로 다닐 수 있는 미국 대학은 MIT뿐이다. 나머지 학교는 합격장만 받는다.
+// - 조기 지원(2007.11.1)은 NIT 한 곳. 정규 지원(2008.1.1)은 NIT와 지어낸 미국 대학 네 곳. 결과는 2007.12, 2008.3.
+// - 실제로 다닐 수 있는 미국 대학은 NIT뿐이다. 나머지 학교는 합격장만 받는다.
 // 판정은 seed로 정해지는 난수라 같은 판에서는 같은 결과가 나온다.
 import { stageOf } from './rules.js';
 import { bondOf } from './bonds.js';
 
 const M = 10000;
 export const SCHOOLS = [
-  { name: 'MIT', bar: 80 },
+  { name: 'NIT', bar: 80 },
   { name: '노스브리지 대학교', bar: 75 },
   { name: '웨스트레이크 공과대', bar: 67 },
   { name: '파인힐 칼리지', bar: 56 },
@@ -69,11 +69,11 @@ function takeToeflNoSeat(s) {
   const a = A(s); a.tries.toefl += 1; const sc = toeflOf(s, a.tries.toefl); a.toefl = Math.max(a.toefl ?? 0, sc); markTests(s);
   s.log.push(`일본에서 토플을 봤습니다. ${sc}점이 나왔습니다.`);
 }
-// 미국 대학 가운데 다닐 수 있는 곳은 MIT뿐이다. 국내 대학에 등록했다가 옮기면 그해 낸 등록금은 돌려받는다.
+// 미국 대학 가운데 다닐 수 있는 곳은 NIT뿐이다. 국내 대학에 등록했다가 옮기면 그해 낸 등록금은 돌려받는다.
 export function goMit(s) {
   const t = s.lastTuition;
-  if (t && t.ym >= 200802 && t.school && t.school !== 'MIT' && t.school === s.school.대학) { s.cash += t.paid; s.log.push(`${t.school} 등록을 취소하고 등록금을 돌려받았습니다.`); }
-  s.school.대학 = 'MIT'; s.flags.대학확정 = true; s.flags.MIT합격 = true; delete s.flags.MIT포기;
+  if (t && t.ym >= 200802 && t.school && t.school !== 'NIT' && t.school === s.school.대학) { s.cash += t.paid; s.log.push(`${t.school} 등록을 취소하고 등록금을 돌려받았습니다.`); }
+  s.school.대학 = 'NIT'; s.flags.대학확정 = true; s.flags.NIT합격 = true; delete s.flags.NIT포기;
   s.graduateYear = s.sex === '남' ? 2014 : 2012;
 }
 
@@ -110,8 +110,8 @@ export function applyEarly(s) { const a = start(s); a.ea = true; s.cash = Math.m
 export function applyRegular(s, which) {
   const a = A(s);
   const pool = which === 'high' ? ['노스브리지 대학교', '웨스트레이크 공과대'] : which === 'safe' ? ['파인힐 칼리지', '레이크쇼어 주립대'] : OTHERS;
-  const mit = !!s.flags.EA보류 || (!s.flags.EA합격 && !s.flags.EA불합격 && which !== 'safe'); // 보류된 MIT 지원서는 정규 지원에서 다시 본다
-  a.rd = [...(mit ? ['MIT'] : []), ...pool];
+  const mit = !!s.flags.EA보류 || (!s.flags.EA합격 && !s.flags.EA불합격 && which !== 'safe'); // 보류된 NIT 지원서는 정규 지원에서 다시 본다
+  a.rd = [...(mit ? ['NIT'] : []), ...pool];
   const fee = (a.rd.length - (s.flags.EA보류 ? 1 : 0)) * 7 * M;
   s.cash = Math.max(Math.min(0, s.cash), s.cash - fee);
 }
@@ -119,20 +119,20 @@ export function applyRegular(s, which) {
 export function onMonth(s) {
   const a = A(s); if (!a) return;
   if (ym(s) === 200711 && a.ea) a.at.ea = scoreOf(s); // 11월 1일 마감 때의 지원서
-  if (ym(s) === 200712 && a.ea && !a.res.MIT) {
+  if (ym(s) === 200712 && a.ea && !a.res.NIT) {
     const p = chanceOf(a.at.ea ?? scoreOf(s), SCHOOLS[0].bar), r = rand(s, 'ea');
     const k = r < p ? '합격' : r < p + (1 - p) * 0.5 ? '보류' : '불합격';
-    a.res.MIT = `조기 ${k}`; s.flags[`EA${k}`] = true; if (k === '합격') s.flags.MIT합격장 = true;
+    a.res.NIT = `조기 ${k}`; s.flags[`EA${k}`] = true; if (k === '합격') s.flags.NIT합격장 = true;
   }
   if (ym(s) === 200801 && a.rd.length) a.at.rd = scoreOf(s);
   if (ym(s) === 200803 && a.rd.length && !s.flags.RD결과) {
     const sc = a.at.rd ?? scoreOf(s);
     for (const name of a.rd) {
-      const bar = SCHOOLS.find((x) => x.name === name).bar - (name === 'MIT' && s.flags.EA보류 ? 1 : 0);
+      const bar = SCHOOLS.find((x) => x.name === name).bar - (name === 'NIT' && s.flags.EA보류 ? 1 : 0);
       a.res[name] = rand(s, `rd:${name}`) < chanceOf(sc, bar) ? '합격' : '불합격';
     }
     s.flags.RD결과 = true;
-    if (a.res.MIT === '합격') { s.flags.MIT합격장 = true; s.flags['RD:MIT'] = true; }
+    if (a.res.NIT === '합격') { s.flags.NIT합격장 = true; s.flags['RD:NIT'] = true; }
     if (a.rd.some((n) => a.res[n] === '합격')) s.flags.RD합격 = true;
   }
 }

@@ -72,7 +72,7 @@ const REPEAT = {
   유명인: ['오늘은 사진 없이 이야기만 해요.', '또 뵙네요.', '요즘 일은 어때요?'],
   사교모임: ['오랜만입니다. 일은 잘 되시죠?', '다음 모임에도 나오세요.', '명함 새로 나왔어요.'],
 };
-const lineOf = (s, p, count) => (count === 0 && p.한줄대사 ? p.한줄대사 : (REPEAT[p.분류] ?? REPEAT.동창)[hash(`${p.id}:${s.year}:${s.month}`) % 3]);
+const lineOf = (s, p, count) => (count === 0 && p.백제대사 ? p.백제대사 : (REPEAT[p.분류] ?? REPEAT.동창)[hash(`${p.id}:${s.year}:${s.month}`) % 3]);
 function touch(s, p, base = 2) {
   const n = s.network;
   const e = n.met[p.id] ?? (n.met[p.id] = { count: 0, first: ym(s), last: ym(s) });

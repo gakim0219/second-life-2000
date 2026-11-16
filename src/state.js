@@ -42,9 +42,11 @@ function purgeGone(v) {
 export function serialize(s) { return JSON.stringify(s); }
 // 학교 이름이 바뀌었다. 옛 저장의 이름을 새 이름으로 옮긴다.
 // 2026-11-16: 학교 이름 바꿈(사용자 지시). 긴 이름부터 바꾼다.
-const RENAMED = [['한빛중', '청솔중'], ['서일중', '청솔중'], ['서울과학고', '한빛과학고'], ['새길직업고', '새길특성화고'], ['느티여고', '푸른여고'], ['세화여고', '매화여고'], ['서울고', '한빛고'], ['느티초', '한솔초']];
+const RENAMED = [['한빛중', '청솔중'], ['서일중', '청솔중'], ['서울과학고', '한빛과학고'], ['새길직업고', '새길특성화고'], ['느티여고', '푸른여고'], ['세화여고', '매화여고'], ['서울고', '한빛고'], ['느티초', '한솔초'],
+  // 2026-11-16: 대학 이름 바꿈(사용자 지시).
+  ['서울대', '한성대'], ['한빛대', '태산대'], ['한줄대', '백제대'], ['새길실무대', '신라전문대'], [/(?<![A-Za-z])MIT(?![A-Za-z]| \(상장)/g, 'NIT']];
 export function deserialize(t) {
-  for (const [a, b] of RENAMED) if (t.includes(a)) t = t.replaceAll(a, b);
+  for (const [a, b] of RENAMED) t = typeof a === 'string' ? (t.includes(a) ? t.replaceAll(a, b) : t) : t.replace(a, b);
   const s = JSON.parse(t);
   if (!s || s.v !== VERSION || !s.stats || typeof s.year !== 'number') throw new Error('저장 파일을 읽을 수 없습니다.');
   if (GONE.some((w) => t.includes(w))) purgeGone(s);

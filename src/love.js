@@ -277,7 +277,7 @@ export function joinMatchmaker(s) {
 // 만남 뒤 화면에 쓸 칸. 외모와 성격은 처음 볼 때 보여 주고, 좋아하는 것은 하나만 먼저 알린다.
 function sceneOf(route, p) {
   const m = p.만남;
-  return { 장소: m.장소, 시간대: m.시간대, 왜_거기_있나: m.왜_거기_있나, 반응: m.말_걸었을_때, 첫_만남: m.첫_만남, 주선_경로: m.주선_경로, 모임: m.모임, 역할: m.모임에서_역할, 외모: p.외모, 성격: p.성격, 한줄대사: p.한줄대사, 직업: p.직업_2026, 힌트: m['좋아하는 것']?.[0] ?? null };
+  return { 장소: m.장소, 시간대: m.시간대, 왜_거기_있나: m.왜_거기_있나, 반응: m.말_걸었을_때, 첫_만남: m.첫_만남, 주선_경로: m.주선_경로, 모임: m.모임, 역할: m.모임에서_역할, 외모: p.외모, 성격: p.성격, 백제대사: p.백제대사, 직업: p.직업_2026, 힌트: m['좋아하는 것']?.[0] ?? null };
 }
 const HUNT_OK = [0.6, 0.75, 0.9];
 function learnMeet(s, p) {
@@ -438,7 +438,7 @@ export function dateHints(s, id) {
   if (!e || !p) return null;
   const st = stageOfLike(e.호감);
   const likes = p.만남['좋아하는 것'] ?? [];
-  return { 좋아하는것: likes.slice(0, st), 끝나는경우: (st >= 2 || (e.나쁜 ?? 0) > 0) ? p.만남['끝나는 경우'] ?? '' : null, 성격: p.성격, 외모: p.외모, 한줄대사: p.한줄대사, 직업: jobAt(p.직업_2026, s.year) };
+  return { 좋아하는것: likes.slice(0, st), 끝나는경우: (st >= 2 || (e.나쁜 ?? 0) > 0) ? p.만남['끝나는 경우'] ?? '' : null, 성격: p.성격, 외모: p.외모, 백제대사: p.백제대사, 직업: jobAt(p.직업_2026, s.year) };
 }
 export function date(s, id, act) {
   const c = canDate(s, id, act);

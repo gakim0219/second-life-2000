@@ -74,7 +74,7 @@ export function showMet(ctx, met) {
     if (!t || said.has(t) || (story.length && story.join(' ').includes(t))) continue;
     said.add(t); story.push(t);
   }
-  const line = met.refused ? null : (met.line ?? sc.한줄대사 ?? p?.한줄대사);
+  const line = met.refused ? null : (met.line ?? sc.백제대사 ?? p?.백제대사);
   const nature = met.refused ? null : first(sc.성격 ?? p?.성격);
   const known = p && !met.refused && love.knownPeople(s).some((x) => x.person.id === p.id);
   return ctx.sheet((close) => h('div', { className: 'stack lv-sheet lv-met' },
@@ -149,7 +149,7 @@ function personSheet(ctx, id, firstNote) {
     const p = k.person; const H = k.hints ?? {};
     return [sheetHead(p.이름, close), resultEl,
       h('div', { className: 'row lv-who' }, avatar(p.id, p.이름, s, 'big'), h('div', {}, h('span', { className: 'chip', text: k.관계 }), h('p', { className: 'lv-like', text: k.like }))),
-      H.한줄대사 ? h('blockquote', { className: 'lv-quote dark', text: H.한줄대사 }) : null,
+      H.백제대사 ? h('blockquote', { className: 'lv-quote dark', text: H.백제대사 }) : null,
       H.성격 ? h('p', { className: 'small', text: H.성격 }) : null,
       H.좋아하는것?.length ? h('p', { className: 'small' }, h('b', { text: '좋아하는 것 ' }), H.좋아하는것.join(', ')) : null,
       H.끝나는경우 ? h('p', { className: 'small lv-warn' }, h('b', { text: '조심할 것 ' }), H.끝나는경우) : null,

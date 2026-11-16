@@ -1,19 +1,19 @@
-// 대학(서울대·MIT)과 사회인 이야기. 한빛대·새길실무대는 이야기가 없다.
-// 서울대·MIT는 학교 이름만 빌렸고 인물과 사건은 모두 가상이다. 능력 상승 숫자는 문구에 쓰지 않는다.
+// 대학(한성대·NIT)과 사회인 이야기. 태산대·신라전문대는 이야기가 없다.
+// 대학 이름과 인물·사건은 모두 가상이다. 능력 상승 숫자는 문구에 쓰지 않는다.
 //
 // 달력 약속
-// - 서울대는 3월 학기 시작. 남자는 대2를 마치고 2010.3 입대, 2011.12 전역, 2012.3 복학이라 대3·대4가 2012·2013년이다.
-// - MIT는 9월 학기 시작. 남자는 2010.6 입대, 2012.3 전역, 2012.9 복학.
-// - 졸업: 서울대 여 2012.2, 남 2014.2 / MIT 여 2012.6, 남 2014.6. 진로에서 '1년 더'를 고르면 한 해 뒤.
+// - 한성대는 3월 학기 시작. 남자는 대2를 마치고 2010.3 입대, 2011.12 전역, 2012.3 복학이라 대3·대4가 2012·2013년이다.
+// - NIT는 9월 학기 시작. 남자는 2010.6 입대, 2012.3 전역, 2012.9 복학.
+// - 졸업: 한성대 여 2012.2, 남 2014.2 / NIT 여 2012.6, 남 2014.6. 진로에서 '1년 더'를 고르면 한 해 뒤.
 // 플래그 약속
-// - '이야기대학': 서울대·MIT 이야기에 들어왔다는 표시(입학 장면에서 켜짐).
+// - '이야기대학': 한성대·NIT 이야기에 들어왔다는 표시(입학 장면에서 켜짐).
 // - '군입대' / '전역': 군 복무 중 = 군입대가 있고 전역이 없음.
-// - '진로:창업|대학원|프리랜서|1년더', '졸업:서울대|MIT'.
-const SNU = '서울대';
-const MIT = 'MIT';
+// - '진로:창업|대학원|프리랜서|1년더', '졸업:한성대|NIT'.
+const SNU = '한성대';
+const NIT = 'NIT';
 const SEX_KEY = { 여: 'f', 남: 'm' };
 const SNU_YEAR = { 1: { 여: 2008, 남: 2008 }, 2: { 여: 2009, 남: 2009 }, 3: { 여: 2010, 남: 2012 }, 4: { 여: 2011, 남: 2013 } };
-const MIT_SPRING = { 1: { 여: 2009, 남: 2009 }, 2: { 여: 2010, 남: 2010 }, 3: { 여: 2011, 남: 2013 }, 4: { 여: 2012, 남: 2014 } };
+const NIT_SPRING = { 1: { 여: 2009, 남: 2009 }, 2: { 여: 2010, 남: 2010 }, 3: { 여: 2011, 남: 2013 }, 4: { 여: 2012, 남: 2014 } };
 // 대동제 무대 큰 박수 기준: 학년마다 76/101/126/151.
 const STAGE_NEED = { 1: 76, 2: 101, 3: 126, 4: 151 };
 
@@ -193,7 +193,7 @@ for (let g = 1; g <= 4; g++) {
 }
 function stageApply(school, g, sex) {
   const snu = school === SNU;
-  const year = (snu ? SNU_YEAR : MIT_SPRING)[g][sex ?? '여'];
+  const year = (snu ? SNU_YEAR : NIT_SPRING)[g][sex ?? '여'];
   const when = { year, month: snu ? 4 : 3, school };
   if (sex) when.sex = sex;
   const ord = ['', '1학년', '2학년', '3학년', '4학년'][g];
@@ -212,7 +212,7 @@ function stageApply(school, g, sex) {
   };
 }
 const stageApplyEvents = [];
-for (const school of [SNU, MIT]) {
+for (const school of [SNU, NIT]) {
   stageApplyEvents.push(stageApply(school, 1), stageApply(school, 2));
   for (const g of [3, 4]) for (const sex of ['여', '남']) stageApplyEvents.push(stageApply(school, g, sex));
 }
@@ -283,7 +283,7 @@ function internApply(school, sex) {
   };
 }
 const contestApplyEvents = [];
-for (const school of [SNU, MIT]) for (const sex of ['여', '남']) contestApplyEvents.push(contestApply(school, sex), internApply(school, sex));
+for (const school of [SNU, NIT]) for (const sex of ['여', '남']) contestApplyEvents.push(contestApply(school, sex), internApply(school, sex));
 
 // ---------- 진로 선택과 졸업 ----------
 function career(sex) {
@@ -309,12 +309,12 @@ function graduation(school, sex, extra) {
   const when = { year: base + (extra ? 1 : 0), month: snu ? 2 : 6, school, sex };
   if (extra) when.flag = '진로:1년더'; else when.notFlag = '진로:1년더';
   return {
-    id: `u_grad_${snu ? 'snu' : 'mit'}_${SEX_KEY[sex]}${extra ? '_x' : ''}`, title: snu ? '졸업식' : 'MIT 졸업식',
+    id: `u_grad_${snu ? 'snu' : 'mit'}_${SEX_KEY[sex]}${extra ? '_x' : ''}`, title: snu ? '졸업식' : 'NIT 졸업식',
     text: snu
       ? `${extra ? '한 해 늦은 ' : ''}졸업식 날이다. 체육관에서 학사모를 받고, 정문 앞에서 가족이 사진을 찍는다. 학과 동기들과 명찰을 바꿔 달았다. 석정란 교수가 악수하며 말한다. "늦지 않았군요. 그럼 시작합시다."`
       : `${extra ? '한 해 늦은 ' : ''}6월 졸업식이다. 잔디밭에 흰 의자가 줄지어 놓였다. 가운 소매가 길어서 사진 속 손이 보이지 않는다. 룸메이트 Daniel이 먼저 달려와 어깨를 쳤다.`,
     when,
-    effect: { set: ['졸업', snu ? '졸업:서울대' : '졸업:MIT'] },
+    effect: { set: ['졸업', snu ? '졸업:한성대' : '졸업:NIT'] },
     choices: [
       { label: '가족 사진을 찍는다', effect: { stress: -5 }, result: '가족이 번갈아 사진을 찍었다. 마지막 한 장은 다 같이 웃었다.' },
       { label: '동기들과 마지막으로 캠퍼스를 걷는다', effect: { stats: { 인맥: 1 }, stress: -3 }, result: '도서관, 학생 식당, 동아리방을 차례로 지나갔다. 말은 많이 하지 않았다.' },
@@ -323,9 +323,9 @@ function graduation(school, sex, extra) {
 }
 const careerEvents = [career('여'), career('남')];
 const gradEvents = [];
-for (const school of [SNU, MIT]) for (const sex of ['여', '남']) gradEvents.push(graduation(school, sex, false), graduation(school, sex, true));
+for (const school of [SNU, NIT]) for (const sex of ['여', '남']) gradEvents.push(graduation(school, sex, false), graduation(school, sex, true));
 
-// ---------- 서울대 2008~2009 ----------
+// ---------- 한성대 2008~2009 ----------
 const snuScenes = [
   {
     id: 'u_snu_0802_saeteo', title: '새터', who: '탁경민',
@@ -579,12 +579,12 @@ const snuScenes = [
   },
 ];
 
-// ---------- MIT 2008~2009 ----------
+// ---------- NIT 2008~2009 ----------
 const mitScenes = [
   {
     id: 'u_mit_0803_prep', title: '출국 준비',
-    text: '고등학교를 마친 봄이다. MIT 입학은 9월이라서 그때까지 반년이 비어 있다. 영어 회화 모임, 서류 정리, 과외를 번갈아 하며 보낸다.',
-    when: { year: 2008, month: 3, school: MIT },
+    text: '고등학교를 마친 봄이다. NIT 입학은 9월이라서 그때까지 반년이 비어 있다. 영어 회화 모임, 서류 정리, 과외를 번갈아 하며 보낸다.',
+    when: { year: 2008, month: 3, school: NIT },
     effect: { set: ['이야기대학'] },
     choices: [
       { label: '영어 회화 모임에 나간다', effect: { stats: { 인맥: 1, 지능: 1 } }, result: '외국인 강사 앞에서 기숙사 생활 이야기를 연습했다. 단어보다 억양이 더 어려웠다.' },
@@ -595,7 +595,7 @@ const mitScenes = [
   {
     id: 'u_mit_0807_pack', title: '짐 싸는 날',
     text: '출국 일주일 전이다. 캐리어 두 개에 겨울옷을 넣었더니 한 개가 넘쳤다. 어머니가 컵라면과 김을 몰래 넣어 놓았다. 친구들이 송별 모임을 연다.',
-    when: { year: 2008, month: 7, school: MIT },
+    when: { year: 2008, month: 7, school: NIT },
     choices: [
       { label: '송별 모임에 간다', effect: { stats: { 인맥: 1 }, stress: -4 }, result: '친구들이 편지를 한 장씩 썼다. 가방 안쪽 주머니에 넣었다.' },
       { label: '짐을 다시 꾸린다', effect: { stress: 2 }, result: '필요 없는 옷을 덜어내고 다시 쌌다. 가방 지퍼가 겨우 닫혔다.' },
@@ -604,7 +604,7 @@ const mitScenes = [
   {
     id: 'u_mit_0808_arrive', title: '공항과 기숙사', who: 'Daniel Okafor',
     text: '인천공항 출국장에서 가족과 인사한다. 어머니가 마지막으로 가방 지퍼를 확인한다. 보스턴에 도착한 날 기숙사 방에는 침대가 두 개 있다. 아래층 침대 위에 농구공이 놓여 있고, 룸메이트가 일어나 손을 내민다. "Hey, roomie! 농구 할 줄 알아? 몰라도 괜찮아, 내가 알려 줄게."',
-    when: { year: 2008, month: 8, school: MIT },
+    when: { year: 2008, month: 8, school: NIT },
     choices: [
       { label: '농구를 해 본다', effect: { bond: { c27: 2 }, stats: { 체력: 1 }, set: ['친구:Daniel'] }, result: '첫 슛은 림에 닿지도 않았다. 세 번째에 들어가자 룸메이트가 소리를 질렀다.' },
       { label: '짐부터 푼다', effect: { bond: { c27: 1 }, stress: -2 }, result: '옷장 자리를 반으로 나눴다. 룸메이트가 밤에 컵라면을 하나 나눠 줬다.' },
@@ -613,7 +613,7 @@ const mitScenes = [
   {
     id: 'u_mit_0809_class', title: '첫 수업', who: '경수연',
     text: '첫 수업은 강당에서 시작한다. 교수의 영어가 빠르다. 필기의 절반을 놓쳤다. 옆자리 학생이 노트를 힐끔 보다 말한다. "저도 오늘 왔어요. 방금 뭐라고 했는지 하나도 못 들었어요. 같이 가요."',
-    when: { year: 2008, month: 9, school: MIT },
+    when: { year: 2008, month: 9, school: NIT },
     choices: [
       { label: '같이 점심을 먹으러 간다', effect: { bond: { c52: 2 }, set: ['친구:경수연'], stats: { 인맥: 1 } }, result: '식당에서 서로 놓친 부분을 맞춰 보니 합쳐서 거의 전부였다.' },
       { label: '혼자 노트를 정리한다', effect: { stats: { 지능: 1 }, stress: 2 }, result: '도서관에서 교재를 찾아 빠진 부분을 채웠다.' },
@@ -622,7 +622,7 @@ const mitScenes = [
   {
     id: 'u_club_fair_mit_1', title: '학생 단체 박람회', who: 'Isaiah Whitfield',
     text: '개강 첫 주 잔디밭에 학생 단체 부스가 열렸다. 로켓 단체, 농구와 운동 모임, 합창과 즉흥 코미디 팀, 국제 학생 모임이 있다. 로켓 단체 회장이 말한다. "볼트 세어 봤어? 한 번 더 세. 그다음 얘기하자." 합창 부스에서는 화학과 Ethan이 말한다. "Sorry, 한국말 천천히요. 아, 오늘 연습 올래요? 듣기만 해도 돼요."',
-    when: { year: 2008, month: 9, school: MIT },
+    when: { year: 2008, month: 9, school: NIT },
     choices: [
       { label: '로켓 단체에 지원한다', effect: { set: ['지원:학술'], bond: { c102: 1 } }, result: '지원서를 냈다. 면접은 작업실에서 본다고 한다.' },
       { label: '운동 모임에 지원한다', effect: { set: ['지원:운동'] }, result: '농구 시범 경기에 나가기로 했다.' },
@@ -634,7 +634,7 @@ const mitScenes = [
   {
     id: 'u_mit_0809_korean', title: '한인 학생 모임', who: 'Grace 이은지',
     text: '한인 학생 모임 환영회가 열린다. 3학년 선배가 문 앞에서 맞아 준다. "어서 와요! 아, 아니, 어서 와! 김치 먹고 싶으면 언제든 말해." 식탁에는 한국 라면과 김밥이 놓여 있다.',
-    when: { year: 2008, month: 9, school: MIT },
+    when: { year: 2008, month: 9, school: NIT },
     choices: [
       { label: '모임에 계속 나간다', effect: { bond: { c28: 2 }, set: ['친구:Grace'], stats: { 인맥: 1 }, stress: -3 }, result: '선배가 이 학교에서 꼭 챙길 것들을 적어 주었다. 첫 줄이 잠자기였다.' },
       { label: '인사만 하고 돌아간다', effect: { stress: -1 }, result: '라면 한 그릇을 먹고 일찍 나왔다. 기숙사 복도가 조용했다.' },
@@ -643,13 +643,13 @@ const mitScenes = [
   {
     id: 'u_mit_0809_crisis', title: '학생 라운지 TV',
     text: '학생 라운지 TV에서 미국 대형 투자은행이 파산했다는 보도가 나온다. 경영 전공 학생들의 말수가 줄었다. 저녁에 한국에서 어머니가 전화로 환율 이야기를 꺼낸다.',
-    when: { year: 2008, month: 9, school: MIT },
+    when: { year: 2008, month: 9, school: NIT },
     effect: { stress: 3 },
   },
   {
     id: 'u_mit_0810_mentor', title: '2학년 멘토', who: '어진호',
     text: '한국인 2학년 어진호 선배가 기숙사 앞에서 기다리고 있다. "보스턴 처음이지? 첫 달은 다들 힘들어. 막히면 바로 연락해." 손에는 학교 주변 지도가 들려 있다.',
-    when: { year: 2008, month: 10, school: MIT },
+    when: { year: 2008, month: 10, school: NIT },
     choices: [
       { label: '수업 요령을 묻는다', effect: { bond: { c53: 1 }, stats: { 지능: 1 } }, result: '과제를 시작하는 순서를 배웠다. 선배는 첫 주에 내는 질문이 제일 중요하다고 했다.' },
       { label: '식당 정보를 묻는다', effect: { bond: { c53: 1 }, stress: -2 }, result: '한국식 국밥집이 지하철로 두 정거장 거리에 있다고 한다.' },
@@ -658,7 +658,7 @@ const mitScenes = [
   {
     id: 'u_mit_0811_thanks', title: '추수감사절', who: 'Josie Halvorsen',
     text: '추수감사절 연휴에 기숙사 복도가 조용하다. 몬타나에서 온 Josie가 부엌 앞에서 말한다. "Thanksgiving? 비행기 값 보고 웃었어. 여기 남는 사람끼리 뭐 해 먹자."',
-    when: { year: 2008, month: 11, school: MIT },
+    when: { year: 2008, month: 11, school: NIT },
     choices: [
       { label: '남아서 같이 요리한다', effect: { bond: { c85: 2 }, stats: { 인맥: 1 }, stress: -4 }, result: '칠면조 대신 닭을 구웠다. 소금을 두 번 넣어서 모두 물을 많이 마셨다.' },
       { label: '한국에 영상 통화를 건다', effect: { stress: -3 }, result: '가족은 아침이었고 이쪽은 저녁이었다. 화면이 끊길 때마다 서로 웃었다.' },
@@ -667,7 +667,7 @@ const mitScenes = [
   {
     id: 'u_mit_0812_home', title: '겨울방학 귀국',
     text: '겨울방학에 한국으로 돌아온다. 동네 편의점 간판이 바뀌었고, 고교 친구들은 군대 이야기를 한다. 공항 입국장에서 가족이 손을 흔든다.',
-    when: { year: 2008, month: 12, school: MIT },
+    when: { year: 2008, month: 12, school: NIT },
     choices: [
       { label: '고교 친구들을 만난다', effect: { stats: { 인맥: 1 }, stress: -4 }, result: '술집 대신 분식집에 모였다. 서로 억양이 변했다고 놀렸다.' },
       { label: '가족과 지낸다', effect: { stress: -6 }, result: '어머니가 해 준 밥을 매일 먹었다. 침대가 낯설 만큼 편했다.' },
@@ -676,7 +676,7 @@ const mitScenes = [
   {
     id: 'u_mit_0901_iap', title: '1월 짧은 강좌', who: '함재혁',
     text: '1월 독립 활동 기간이다. 짧은 강좌와 프로젝트가 캠퍼스 곳곳에서 열린다. 기계 전공 희망생 함재혁이 로봇 부품을 들고 서 있다. "이거 농담인데요. …방금 웃으라고 한 말이에요." 옆 강의실에서는 인도에서 온 Meera가 말소리 프로젝트에 사람을 구한다. "방금 \'괜찮아요\'는 yes예요, no예요? 적어 둘게요."',
-    when: { year: 2009, month: 1, school: MIT },
+    when: { year: 2009, month: 1, school: NIT },
     choices: [
       { label: '로봇 제작에 참여한다', effect: { bond: { c80: 2 }, stats: { 지능: 1, 체력: 1 } }, result: '납땜을 하다 손가락을 데었다. 로봇은 사흘 만에 한 걸음을 걸었다.' },
       { label: '말소리 프로젝트에 참여한다', effect: { bond: { c83: 2 }, stats: { 지능: 1, 인맥: 1 } }, result: '같은 문장을 열 가지 억양으로 말했다. 기록지에 \'괜찮아요\'가 가장 길게 적혔다.' },
@@ -685,13 +685,13 @@ const mitScenes = [
   {
     id: 'u_mit_0902_snow', title: '눈 오는 캠퍼스', who: 'Solveig Aarvik',
     text: '2월에 눈이 사흘째 내린다. 기숙사 옆방 Solveig가 장갑을 내민다. "추워? 이거 써. 남는 거야."',
-    when: { year: 2009, month: 2, school: MIT },
+    when: { year: 2009, month: 2, school: NIT },
     effect: { bond: { c97: 1 }, stress: -2 },
   },
   {
     id: 'u_mit_0903_break', title: '봄방학',
     text: '3월 말 봄방학이다. 기숙사 절반이 비었다. 뉴욕으로 당일치기 여행을 가자는 제안과, 기숙사에서 쉬자는 제안이 동시에 나온다.',
-    when: { year: 2009, month: 3, school: MIT },
+    when: { year: 2009, month: 3, school: NIT },
     choices: [
       { label: '뉴욕에 다녀온다', effect: { cash: -200000, stress: -6, stats: { 매력: 1 } }, result: '버스로 네 시간을 달렸다. 박물관 앞 계단에 앉아 샌드위치를 먹었다.' },
       { label: '기숙사에서 쉰다', effect: { stress: -5 }, result: '복도가 조용해서 처음으로 숙제 없는 밤을 보냈다.' },
@@ -700,7 +700,7 @@ const mitScenes = [
   {
     id: 'u_mit_0904_guest', title: '낯익은 목소리', who: '윤하나',
     text: '봄 학생 행사를 구경하러 근처 대학 학생이 왔다. 뒤에서 낯익은 목소리가 들린다. "…너 맞지? 역삼동. 나 기억해?" 몇 년 전 미국으로 떠난 동네 친구였다.',
-    when: { year: 2009, month: 4, school: MIT },
+    when: { year: 2009, month: 4, school: NIT },
     choices: [
       { label: '반갑게 안부를 묻는다', effect: { bond: { c08: 2 }, set: ['친구:윤하나'], stress: -3 }, result: '둘 다 영어 억양이 섞인 한국어를 썼다. 연락처를 서로 휴대폰에 저장했다.' },
       { label: '짧게 인사만 한다', effect: { bond: { c08: 1 } }, result: '그가 다음 약속이 있다고 했다. 인사를 하고 헤어졌다.' },
@@ -709,19 +709,19 @@ const mitScenes = [
   {
     id: 'u_mit_0906_summer', title: '여름 귀국',
     text: '6월 졸업식 철이 지나고 여름방학이 시작됐다. 한국행 비행기에서 창밖으로 구름이 길게 깔려 있다. 한국에서는 아침 햇빛이 먼저 반겼다.',
-    when: { year: 2009, month: 6, school: MIT },
+    when: { year: 2009, month: 6, school: NIT },
     effect: { stress: -5 },
   },
   {
     id: 'u_mit_0909_flu', title: '개강과 손 씻기',
     text: '개강 주에 기숙사 게시판에 손 씻기 안내가 붙었다. 신종플루가 미국에서도 번지고 있다. 한국에서도 개학이 늦춰진다는 소식을 가족에게서 듣는다.',
-    when: { year: 2009, month: 9, school: MIT },
+    when: { year: 2009, month: 9, school: NIT },
     effect: { stress: 2 },
   },
   {
     id: 'u_mit_0911_guest', title: '룸메이트 집 초대', who: 'Daniel Okafor',
     text: '추수감사절에 Daniel이 가족 집에 초대한다. 식탁에는 음식이 한 가지 더 놓여 있고, 어머니가 그것이 무엇인지 설명해 준다. 설거지를 맡으니 그가 웃으며 수건을 건넨다.',
-    when: { year: 2009, month: 11, school: MIT },
+    when: { year: 2009, month: 11, school: NIT },
     choices: [
       { label: '초대에 응한다', effect: { bond: { c27: 2 }, stats: { 인맥: 1 }, stress: -4 }, result: '식구들이 이름을 외우려고 세 번씩 불러 주었다. 돌아오는 차에서 졸았다.' },
       { label: '기숙사에서 공부한다', effect: { stats: { 지능: 1 }, stress: 2 }, result: '기숙사가 텅 비었다. 도서관 불이 밤새 켜져 있었다.' },
@@ -730,7 +730,7 @@ const mitScenes = [
   {
     id: 'u_mit_0910_marcus', title: '창업 동아리 선배', who: 'Marcus Thibodeaux',
     text: '창업 동아리 피자 모임에 갔다. 경영 전공 3학년 Marcus가 접시를 돌린다. "아이디어 없어도 돼. 일단 피자 먹으러 와." 칠판에는 다른 사람들이 쓴 아이디어가 가득하다.',
-    when: { year: 2009, month: 10, school: MIT },
+    when: { year: 2009, month: 10, school: NIT },
     choices: [
       { label: '아이디어를 하나 적는다', effect: { bond: { c82: 2 }, set: ['친구:Marcus'], stats: { 지능: 1 } }, result: '칠판 모서리에 한 줄을 적었다. Marcus가 그 줄에 동그라미를 쳤다.' },
       { label: '피자만 먹고 나온다', effect: { bond: { c82: 1 }, stress: -2 }, result: '피자가 맛있었다. 다음 모임 날짜만 적어 왔다.' },
@@ -756,19 +756,19 @@ const clubFlavor = [
     text: '연합 동아리 총무 배민지가 장부를 펴 놓고 말한다. "회비 3천 원 비어요. 누구예요. 혼내진 않을게요, 아마." 다른 학교 사람들이 줄줄이 고개를 숙인다.',
     a: ['총무를 도와 장부를 맞춘다', { stats: { 인맥: 1, 지능: 1 }, bond: { c76: 1 } }, '영수증을 날짜순으로 정리하니 3천 원의 행방이 나왔다. 모두가 한숨을 쉬며 웃었다.'],
     b: ['회비를 내고 자리를 뜬다', { cash: -3000 }, '회비를 냈다. 총무가 영수증을 써 주었다.'] },
-  { id: 'u_flavor_mit_학술', who: 'Isaiah Whitfield', school: MIT, kind: '학술', year: 2008, month: 11,
+  { id: 'u_flavor_mit_학술', who: 'Isaiah Whitfield', school: NIT, kind: '학술', year: 2008, month: 11,
     text: '로켓 단체 작업실에서 볼트를 센다. 4학년 회장이 말한다. "볼트 세어 봤어? 한 번 더 세. 그다음 얘기하자." 세 번째에 빠진 하나가 나왔다.',
     a: ['빠진 볼트를 찾는다', { stats: { 지능: 1 }, bond: { c102: 1 } }, '상자 바닥에 있었다. 회장이 짧게 고개를 끄덕였다.'],
     b: ['조립을 지켜본다', { stress: -1 }, '공구 이름을 외웠다. 다음엔 내가 들어 볼 차례다.'] },
-  { id: 'u_flavor_mit_운동', who: 'Caleb Wojcik', school: MIT, kind: '운동', year: 2008, month: 11,
+  { id: 'u_flavor_mit_운동', who: 'Caleb Wojcik', school: NIT, kind: '운동', year: 2008, month: 11,
     text: '농구 모임에 해군 복무를 마치고 입학한 Caleb이 나온다. "다들 몇 살이야? …난 그냥 형이라고 불러. 라면 있어." 경기가 끝나자 라면 냄비가 나왔다.',
     a: ['경기에 계속 뛴다', { stats: { 체력: 1 }, bond: { c87: 1 } }, '숨이 가쁜 채로 한 골을 넣었다. 형이라고 부르게 됐다.'],
     b: ['라면만 얻어먹는다', { stress: -2 }, '라면이 짰다. 국물은 다 마셨다.'] },
-  { id: 'u_flavor_mit_공연', who: 'Ruth Pelletier', school: MIT, kind: '공연', year: 2008, month: 11,
+  { id: 'u_flavor_mit_공연', who: 'Ruth Pelletier', school: NIT, kind: '공연', year: 2008, month: 11,
     text: '합창 연습실에서 수학과 음악을 같이 하는 Ruth가 지휘봉을 든다. "음이 틀렸어요. 수학도요. 둘 다 고쳐 드릴게요." 네 번째 마디부터 다시 시작한다.',
     a: ['음을 다시 잡는다', { stats: { 매력: 1 }, bond: { c105: 1 } }, '세 번째 시도에서 화음이 맞았다. 연습실이 잠시 조용했다.'],
     b: ['듣기만 한다', { stress: -2 }, '뒷자리에서 화음을 들었다. 숙제 풀이가 머릿속에서 잠깐 멀어졌다.'] },
-  { id: 'u_flavor_mit_연합', who: 'Tan Wei Jie', school: MIT, kind: '연합', year: 2008, month: 11,
+  { id: 'u_flavor_mit_연합', who: 'Tan Wei Jie', school: NIT, kind: '연합', year: 2008, month: 11,
     text: '국제 학생 모임에서 경제학 3학년 Tan이 쪽지를 건넨다. "이번 달 알바 자리 넘길게. 아, 나? 요즘 좀 바빠서." 도서관 서가 정리 알바다.',
     a: ['알바 자리를 받는다', { cash: 200000, bond: { c96: 1 } }, '서가 정리는 생각보다 힘들었다. 월급 대신 도서관 지름길을 알게 됐다.'],
     b: ['고맙다고 하고 거절한다', { stats: { 인맥: 1 } }, '시간이 안 된다고 말했다. Tan이 다른 사람에게 넘겼다.'] },
@@ -778,7 +778,7 @@ const clubFlavor = [
   choices: [{ label: f.a[0], effect: f.a[1], result: f.a[2] }, { label: f.b[0], effect: f.b[1], result: f.b[2] }],
 }));
 
-// ---------- 2학년·3학년 서울대/MIT 사람 장면 ----------
+// ---------- 2학년·3학년 한성대/NIT 사람 장면 ----------
 const peopleScenes = [
   {
     id: 'u_snu_0905_group', title: '조별 과제', who: '사공진',
@@ -807,7 +807,7 @@ const peopleScenes = [
   {
     id: 'u_mit_0902_ta', title: '수업 조교', who: 'Deniz Karaosman',
     text: '전기전산 수업 조교 Deniz의 사무실 시간이다. 그는 박사과정이고 늘 눈이 충혈되어 있다. "새벽 2시 메일이 제일 빨라요. 농담 아닙니다." 질문 목록을 들고 온 학생이 줄을 섰다.',
-    when: { year: 2009, month: 2, school: MIT },
+    when: { year: 2009, month: 2, school: NIT },
     choices: [
       { label: '질문을 가지고 찾아간다', effect: { bond: { c94: 1 }, stats: { 지능: 1 } }, result: '문제 풀이 말고 풀이 방식을 물었다. 조교가 칠판에 선을 세 개 그었다.' },
       { label: '멀리서 지켜본다', effect: { stress: -1 }, result: '질문하는 학생들의 순서를 세어 봤다. 열 명이 넘었다.' },
@@ -816,7 +816,7 @@ const peopleScenes = [
   {
     id: 'u_mit_0905_rocket', title: '로켓 단체 계산', who: 'Lesedi Molefhe',
     text: '보츠와나에서 온 항공우주 희망생 Lesedi가 칠판에 계산을 쓴다. "Okay, 계산 다시. 말로 할 테니까 틀리면 바로 끊어요." 둘러선 사람들이 한 줄씩 따라 쓴다.',
-    when: { year: 2009, month: 5, school: MIT },
+    when: { year: 2009, month: 5, school: NIT },
     choices: [
       { label: '계산을 끝까지 따라간다', effect: { bond: { c81: 1 }, stats: { 지능: 1 } }, result: '세 번째 줄에서 부호를 놓쳤다. Lesedi가 끊었고 다 같이 웃었다.' },
       { label: '필기만 해 둔다', effect: { stress: -1 }, result: '계산 과정을 노트에 옮겼다. 나중에 혼자 풀어 보기로 했다.' },
@@ -825,7 +825,7 @@ const peopleScenes = [
   {
     id: 'u_mit_1002_prof', title: '연구실 방문', who: 't09',
     text: '2학년 겨울 연구 참여를 앞두고 Wrenfield 교수의 연구실을 찾았다. 교수는 서류를 보지 않고 눈을 본다. "Good. Now tell me what you don\'t know."',
-    when: { year: 2010, month: 2, school: MIT },
+    when: { year: 2010, month: 2, school: NIT },
     choices: [
       { label: '모르는 것을 솔직히 말한다', effect: { bond: { c95: 1 }, stats: { 지능: 1 } }, result: '교수는 고개를 끄덕이고 모른다고 말한 항목 세 개에 동그라미를 쳤다.' },
       { label: '아는 것부터 설명한다', effect: { stress: 2 }, result: '교수는 중간에 말을 끊지 않았다. 설명이 끝난 뒤 한 번 더 물었다.' },
@@ -833,7 +833,7 @@ const peopleScenes = [
   },
 ];
 
-// ---------- 서울대 여/남 공통: 2010~2013 ----------
+// ---------- 한성대 여/남 공통: 2010~2013 ----------
 const midScenes = [
   {
     id: 'u_f_2010_worldcup', title: '월드컵 단체 응원',
@@ -896,7 +896,7 @@ const armyScenes = [
   {
     id: 'u_army_farewell_mit', title: '송별 모임', who: 'Daniel Okafor',
     text: '2학년을 마치고 입대를 앞둔 5월이다. 기숙사 친구들이 부엌에 모였다. Daniel이 한국식 인사를 배워 왔다며 어색한 억양으로 말한다. 모두 박수를 쳤다.',
-    when: { year: 2010, month: 5, school: MIT, sex: '남' },
+    when: { year: 2010, month: 5, school: NIT, sex: '남' },
     effect: { bond: { c27: 1 }, stats: { 인맥: 1 }, stress: -3 },
   },
   {
@@ -908,25 +908,25 @@ const armyScenes = [
   {
     id: 'u_army_enlist_mit', title: '입대',
     text: '귀국한 6월에 입대한다. 훈련소 앞에서 가족과 인사하고 머리를 밀었다. 영어로 하던 생각이 하루 만에 한국어 구호로 바뀌었다.',
-    when: { year: 2010, month: 6, school: MIT, sex: '남' },
+    when: { year: 2010, month: 6, school: NIT, sex: '남' },
     effect: { set: ['군입대'], stress: 5 },
   },
   {
     id: 'u_army_letter', title: '편지',
     text: '가족이 보낸 편지가 도착했다. 어머니의 글씨가 평소보다 커서 두 줄만 읽었는데도 눈이 뜨거워졌다. 침상 옆자리 선임이 편지가 왔다고 장난으로 놀렸다.',
-    when: { flag: '군입대', notFlag: '전역', notSchool: ['한빛대', '새길실무대'] },
+    when: { flag: '군입대', notFlag: '전역', notSchool: ['태산대', '신라전문대'] },
     effect: { stress: -3 },
   },
   {
     id: 'u_army_worldcup', title: '내무반 월드컵',
     text: '월드컵 경기가 있는 밤, 내무반에서 단체로 TV를 본다. 규칙상 목소리를 낮춰야 하지만 골이 들어가면 참기 어렵다. 한국이 원정 16강에 올랐다는 소식이 병영 전체에 퍼진다.',
-    when: { year: 2010, month: 6, sex: '남', flag: '군입대', notFlag: '전역', notSchool: ['한빛대', '새길실무대'] },
+    when: { year: 2010, month: 6, sex: '남', flag: '군입대', notFlag: '전역', notSchool: ['태산대', '신라전문대'] },
     effect: { stress: -4, stats: { 인맥: 1 } },
   },
   {
     id: 'u_army_leave', title: '첫 휴가',
     text: '첫 휴가를 나온다. 집 앞 편의점 간판이 그대로인 게 신기하다. 친구에게 연락을 돌렸는데 시간이 맞는 사람은 둘뿐이다.',
-    when: { flag: '군입대', notFlag: '전역', from: 201009, to: 201112, notSchool: ['한빛대', '새길실무대'] },
+    when: { flag: '군입대', notFlag: '전역', from: 201009, to: 201112, notSchool: ['태산대', '신라전문대'] },
     choices: [
       { label: '가족과 하루를 보낸다', effect: { stress: -6 }, result: '어머니가 밥상을 세 번 차렸다. 마지막 날에는 말없이 가방을 같이 쌌다.' },
       { label: '친구들을 만난다', effect: { stress: -4, stats: { 인맥: 1 }, cash: -80000 }, result: '고깃집에서 군대 얘기만 두 시간을 했다. 막차를 놓칠 뻔했다.' },
@@ -935,7 +935,7 @@ const armyScenes = [
   {
     id: 'u_army_junior', title: '후임',
     text: '3월이다. 새 후임이 들어왔다. 어깨가 굳은 그를 보며 작년의 자신을 떠올린다. 식사 시간에 반찬을 덜어 주니 후임이 크게 고개를 숙인다.',
-    when: { year: 2011, month: 3, flag: '군입대', notFlag: '전역', notSchool: ['한빛대', '새길실무대'] },
+    when: { year: 2011, month: 3, flag: '군입대', notFlag: '전역', notSchool: ['태산대', '신라전문대'] },
     choices: [
       { label: '먼저 말을 걸어 준다', effect: { stats: { 인맥: 1 }, stress: -2 }, result: '후임이 부산 출신이라고 했다. 사투리가 낯익어서 웃었다.' },
       { label: '규정을 정확히 알려 준다', effect: { stats: { 지능: 1 } }, result: '자주 틀리는 부분만 짚어 줬다. 후임이 수첩에 적었다.' },
@@ -950,7 +950,7 @@ const armyScenes = [
   {
     id: 'u_army_discharge_mit', title: '전역',
     text: '3월 전역 날이다. 정문을 나오니 가족이 기다린다. 군복을 벗고 입은 사복이 어색하게 헐렁하다. 기숙사 룸메이트가 보낸 메시지에는 복학 날짜를 알려 달라고 적혀 있다.',
-    when: { year: 2012, month: 3, school: MIT, sex: '남', flag: '군입대' },
+    when: { year: 2012, month: 3, school: NIT, sex: '남', flag: '군입대' },
     effect: { set: ['전역'], stress: -8 },
   },
   {
@@ -965,7 +965,7 @@ const armyScenes = [
   {
     id: 'u_army_return_mit', title: '복학', who: 'Daniel Okafor',
     text: '9월 복학이다. 룸메이트가 같은 방을 쓰도록 신청해 두었다. Daniel이 침대 아래 칸에 농구공을 놓고 말한다. "Welcome back. 이제 한국식 군대 이야기 들려줘."',
-    when: { year: 2012, month: 9, school: MIT, sex: '남', flag: '전역' },
+    when: { year: 2012, month: 9, school: NIT, sex: '남', flag: '전역' },
     choices: [
       { label: '군대 이야기를 들려준다', effect: { bond: { c27: 1 }, stress: -4 }, result: '내무반 이야기를 영어로 하려니 단어가 모자랐다. 몸짓이 도움이 됐다.' },
       { label: '수업 이야기부터 묻는다', effect: { stats: { 지능: 1 } }, result: '그동안 바뀐 수업 방식을 물었다. Daniel이 노트 한 권을 건넸다.' },
@@ -1022,7 +1022,7 @@ const reunions = [
   // --- 한빛고
   {
     id: 'w_reunion_2014_seoulgo', title: '한빛고 동창 모임 (2014)',
-    text: '한빛고 동창 모임이 열렸다. 노현우는 서울대 경영을 졸업하고 증권회사에 들어갔다. 남궁찬은 광고 회사에 들어갔다. 설태주는 세션 연주자로 밤마다 합주실에 있다. 강태윤은 지난해 대학 동기와 앱 창업을 했고 올해 졸업한다. 임재민은 제약 회사 영업을 한다. 최동현은 아버지 도장에서 사범을 한다.',
+    text: '한빛고 동창 모임이 열렸다. 노현우는 한성대 경영을 졸업하고 증권회사에 들어갔다. 남궁찬은 광고 회사에 들어갔다. 설태주는 세션 연주자로 밤마다 합주실에 있다. 강태윤은 지난해 대학 동기와 앱 창업을 했고 올해 졸업한다. 임재민은 제약 회사 영업을 한다. 최동현은 아버지 도장에서 사범을 한다.',
     when: { year: 2014, month: 2, school: '한빛고' },
     choices: [
       mixer('강태윤의 앱 이야기를 듣는다', { bond: { c09: 2 }, stats: { 지능: 1 } }, '강태윤은 휴대폰 화면 하나로 설명을 끝냈다. 버튼이 두 개뿐이라고 했다.'),
@@ -1139,11 +1139,11 @@ const reunions = [
 const S = '사회인';
 const life = [
   { id: 'w_army_enlist', title: '입대', text: '3월, 머리를 짧게 자르고 훈련소 앞에 섰다. 부모님이 손을 흔들었다. 이제 한동안 할 수 있는 일이 많지 않다.',
-    when: { year: 2010, month: 3, sex: '남', stage: '대학', notSchool: ['서울대', 'MIT'] }, effect: { set: ['군입대'], stress: 5 } },
+    when: { year: 2010, month: 3, sex: '남', stage: '대학', notSchool: ['한성대', 'NIT'] }, effect: { set: ['군입대'], stress: 5 } },
   { id: 'w_army_leave', title: '첫 휴가', text: '첫 휴가를 나왔다. 집 밥이 이렇게 맛있는 줄 몰랐다. 친구들에게 연락을 돌리는데 나흘이 금방 갔다.',
-    when: { year: 2010, month: 10, flag: '군입대', notFlag: '전역', notSchool: ['서울대', 'MIT'] }, effect: { stress: -6 } },
+    when: { year: 2010, month: 10, flag: '군입대', notFlag: '전역', notSchool: ['한성대', 'NIT'] }, effect: { stress: -6 } },
   { id: 'w_army_discharge', title: '전역', text: '12월, 위병소를 걸어 나왔다. 군복을 벗으니 어색하다. 달력에는 복학과 앞으로의 일이 비어 있다.',
-    when: { year: 2011, month: 12, flag: '군입대', notSchool: ['서울대', 'MIT'] }, effect: { set: ['전역'], stress: -8 } },
+    when: { year: 2011, month: 12, flag: '군입대', notSchool: ['한성대', 'NIT'] }, effect: { set: ['전역'], stress: -8 } },
   // 졸업 직후 진로별 첫 달
   { id: 'w_first_month', title: '학교를 떠난 첫 달',
     text: '학교를 떠나 맞는 첫 달이다. 학생증 대신 신분증을 꺼내는 날이 늘었다. 통장에는 등록금도 과외비도 찍히지 않는다. 월세와 교통비를 처음으로 한 장의 종이에 적어 보았다.',
@@ -1349,9 +1349,9 @@ const life = [
     when: { stage: S, year: 2026, month: 6 }, effect: { stress: 2, stats: { 인맥: 1 } } },
 ];
 
-const clubFairRetry = [clubRetry(SNU, 2009, 3), clubRetry(MIT, 2009, 9)];
-const clubYear2Events = [clubYear2(SNU, 2009, 4), clubYear2(MIT, 2009, 10)];
-const electionEvents = [election(SNU, '여'), election(SNU, '남'), election(MIT, '여'), election(MIT, '남')];
+const clubFairRetry = [clubRetry(SNU, 2009, 3), clubRetry(NIT, 2009, 9)];
+const clubYear2Events = [clubYear2(SNU, 2009, 4), clubYear2(NIT, 2009, 10)];
+const electionEvents = [election(SNU, '여'), election(SNU, '남'), election(NIT, '여'), election(NIT, '남')];
 const electTermEvents = [electTerm('여'), electTerm('남')];
 
 export default [

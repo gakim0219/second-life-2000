@@ -31,8 +31,8 @@ const I = (s) => (s.island ??= { old: 0, hy: 0, tests: {}, visits: 0 });
 const net = (s) => { try { return inv.isLoaded() ? inv.netWorth(s) : s.cash; } catch { return s.cash; } };
 const inSchool = (s) => ['중학', '고등'].includes(stageOf(s));
 const vac = (s) => [1, 8].includes(s.month);
-// 서울에 없는 때: 복무 중이거나 MIT 학기 중. 직접 만나는 이야기는 돌아올 때까지 기다린다(페르소나 점검 2026-11-13).
-const gone = (s) => inArmy(s) || (enrolled(s) && stageOf(s) === '대학' && s.school?.대학 === 'MIT' && !isVacation(s));
+// 서울에 없는 때: 복무 중이거나 NIT 학기 중. 직접 만나는 이야기는 돌아올 때까지 기다린다(페르소나 점검 2026-11-13).
+const gone = (s) => inArmy(s) || (enrolled(s) && stageOf(s) === '대학' && s.school?.대학 === 'NIT' && !isVacation(s));
 const minor = (s) => ymOf(s) < 200803; // 미성년 때는 아버지가 늘 함께 간다
 const old = (s, n) => { I(s).old = Math.max(0, I(s).old + n); };
 const hy = (s, n) => { I(s).hy = Math.max(0, I(s).hy + n); };
@@ -97,7 +97,7 @@ export const officeOpen = (s) => !!s.flags?.힐_계좌 && !G(s)?.sold;
 export const officeName = (s) => (G(s)?.chair?.sign === 'yeon' ? '연 캐피털' : '광화문 사무소');
 // 사무소에 있는 사람. 사진은 art/me 그림을 쓴다.
 export const officeStaff = (s) => (G(s)?.hyMet || G(s)?.client ? [{ pic: '하연', name: '진하연', tag: s.partner?.id === HAYEON_ID ? (s.partner.married ? '아내' : '연인') : G(s)?.chair?.sign === 'yeon' ? '연 캐피털 대표' : '서울 대표' }] : []);
-const away = (s) => (inArmy(s) ? null : enrolled(s) && stageOf(s) === '대학' && s.school?.대학 === 'MIT' && !isVacation(s) ? { ok: false, why: '미국에 있는 동안에는 갈 수 없습니다.' } : null);
+const away = (s) => (inArmy(s) ? null : enrolled(s) && stageOf(s) === '대학' && s.school?.대학 === 'NIT' && !isVacation(s) ? { ok: false, why: '미국에 있는 동안에는 갈 수 없습니다.' } : null);
 const monthOnce = (key) => (s) => away(s) ?? (G(s)?.[key] === m12(s) ? { ok: false, why: '이번 달에는 이미 했습니다.' } : null);
 export const OFFICE_ACTIONS = [
   { id: 'hill_book', group: '광화문', label: '하연에게 이번 달 장부 보여 주기', stress: 2, show: (s) => officeOpen(s) && !!G(s)?.hyMet, req: monthOnce('bookAt'),
@@ -178,7 +178,7 @@ export function islandProfile(s, key) {
 export const HAYEON = {
   id: HAYEON_ID, 이름: '진하연', 성별: '여', 출생연도: 1978, 쓰임: '섬', 집안등급: '큰 부자', 직업_2026: '힐아일랜드 캐피털 서울 대표', 형편_2026: '최상',
   외모: '머리를 낮게 묶고 짙은 남색 정장을 입는다. 눈매가 날카롭고 웃음이 드물다.', 성격: '냉정하고 숫자에 강하다. 가까워지면 말이 짧아지고 챙기는 것이 많아진다.',
-  한줄대사: '십 분 줄게. 숫자로 말해.', 히스토리: '한국에서 자랐고 홍콩에서 일을 배웠다. 이십대 중반에 힐아일랜드 서울 사무소를 맡았다. 할아버지 말고는 가족 이야기를 하지 않는다.',
+  백제대사: '십 분 줄게. 숫자로 말해.', 히스토리: '한국에서 자랐고 홍콩에서 일을 배웠다. 이십대 중반에 힐아일랜드 서울 사무소를 맡았다. 할아버지 말고는 가족 이야기를 하지 않는다.',
   만남: { 경로: '힐아일랜드', 기간: [2011, 2026], 조건: { 매력: 0, 인맥: 0 }, 아는사람: true, 성향: '일', 결혼의향: true,
     첫_만남: '광화문 사무소에서 오래 알고 지낸 사이다.', '좋아하는 것': ['조용한 찻집', '야근 뒤 짜장면', '바둑 구경', '동네 산책'],
     '끝나는 경우': '약속 시간을 가볍게 여기거나 연락 없이 미루면 끝난다.', 잘되면: '일도 삶도 같이 정하는, 말이 짧아도 통하는 사이가 된다.' },

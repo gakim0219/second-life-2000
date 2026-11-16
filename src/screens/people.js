@@ -21,7 +21,7 @@ import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
 import { nextStory } from '../../data/events_bonds.js';
-import { SIS, sisName, sisAge, sisSchool, kinOptions, kinAct } from '../kin.js';
+import { SIS, sisName, sisAge, sisSchool, kinOptions, kinAct, carOptions, parentsCar, josa } from '../kin.js';
 
 // ───────── 인물 표 ─────────
 // 학교별 인물과 화면 꼬리표. 빈 값은 '같은 반'으로 보인다. 연애·돈·외모와 관련된 말은 꼬리표에 쓰지 않는다.
@@ -136,6 +136,7 @@ function statusLine(s, id) {
   const out = [];
   if (isSis(id)) out.push(`${sisAge(s)}살. ${sisSchool(s)}. ${s.year * 100 + s.month < 201603 ? '집에서 같이 지낸다.' : '따로 살지만 집에 자주 들른다.'}`);
   else if (isKin(id)) out.push('저녁이면 식탁에서 하루 이야기를 듣는다.');
+  if (id === '아버지' && parentsCar(s)) out.push(`요즘은 ${josa(parentsCar(s).name, '을', '를')} 몰고 다닌다.`);
   else if (where) out.push(`이번 달에는 ${PLACE_NAME[where]}에서 자주 보인다.`);
   const last = s.bondSeen?.[id];
   const gap = last == null ? null : ym(s) - last;
@@ -198,9 +199,11 @@ function renderPerson(ctx, { id, here = false } = {}) {
   if (here && (isParent(id) || isSis(id))) {
     const who = isSis(id) ? SIS : '부모님';
     actions.push(h('h3', { className: 'kin-head', text: isSis(id) ? '미영에게 해 주기' : '부모님께 해 드리기' }));
+    const done = (r) => { if (!r.ok) { ctx.toast(r.why); return false; } ctx.save?.(); ctx.toast(r.text); ctx.refresh(); return true; };
     for (const o of kinOptions(s, who)) {
-      const chips = [o.slot ? '칸 1' : null, o.cost ? won(o.cost) : null].filter(Boolean).join(' · ');
-      actions.push(h('button', { className: 'btn', disabled: !o.ok, on: { click: () => { const r = kinAct(s, who, o.key); if (!r.ok) { ctx.toast(r.why); return; } ctx.save?.(); ctx.toast(r.text); ctx.refresh(); } } },
+      const chips = [o.slot ? '칸 1' : null, o.cost ? `${won(o.cost)}${o.from ? '부터' : ''}` : null].filter(Boolean).join(' · ');
+      const click = o.pick ? () => carSheet(ctx, s, done) : () => done(kinAct(s, who, o.key));
+      actions.push(h('button', { className: 'btn', disabled: !o.ok, on: { click } },
         o.label, chips ? h('span', { className: 'chip num', text: chips }) : null, !o.ok ? h('span', { className: 'chip lock', text: o.why }) : null));
     }
   }
@@ -232,6 +235,15 @@ function renderPerson(ctx, { id, here = false } = {}) {
     actions.length ? h('div', { className: 'stack person-actions' }, actions) : null);
 }
 
+// 부모님께 사 드릴 차 고르기(사용자 지시 2026-11-16). 고른 차는 집 앞에 선다.
+function carSheet(ctx, s, done) {
+  const now = parentsCar(s);
+  ctx.sheet((close) => h('div', { className: 'stack' },
+    h('div', { className: 'row between' }, h('h2', { text: '어떤 차를 사 드릴까' }), h('button', { className: 'sheet-x', 'aria-label': '닫기', text: '✕', on: { click: close } })),
+    h('p', { className: 'sub', text: now ? `지금 집 앞에는 ${josa(now.name, '이', '가')} 서 있다. 새 차를 사 드리면 바꿔 드린다.` : '고른 차는 집 앞에 서 있게 된다.' }),
+    carOptions(s).sort((a, b) => a.cost - b.cost).map((c) => h('button', { className: 'btn', disabled: !c.ok, on: { click: () => { if (done(kinAct(s, '부모님', '차', c.name))) close(); } } },
+      `🚗 ${c.name}`, h('span', { className: 'chip num', text: won(c.cost) }), !c.ok ? h('span', { className: 'chip lock', text: c.why }) : null))));
+}
 // 관리자 모드 숫자. 사이(bonds)와, 연애 상대면 호감도 함께.
 const fmt = (n) => (Math.round(n * 10) / 10).toString();
 function adminLine(s, id) {

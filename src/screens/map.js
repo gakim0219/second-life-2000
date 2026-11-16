@@ -13,6 +13,7 @@ import { openCashier, openKaraoke, nextBar, kinCard } from './common.js';
 import { officeStaff, islandPeople, islandProfile } from '../../data/events_island.js';
 import { icon } from './icons.js';
 import { timesBar, doMany } from './times.js';
+import { parentsCar } from '../kin.js';
 import { face, heartsEl, mateMark, crowd, nameOf, tagOf, photoOf, PLACE_NAME } from './people.js';
 
 // ───────── 지도 자료 ─────────
@@ -417,6 +418,7 @@ function renderPlace(ctx, params = {}) {
         h('span', { className: 'stand-pic' }, kinCard(m.pic, stageOf(s)) ?? h('b', { text: [...m.name][0] })),
         h('span', { className: 'stand-tag' }, h('b', { text: m.name }), h('span', { className: 'sub', text: m.tag }))))) : h('p', { className: 'place-empty', text: isVacation(s) && inSchool ? '방학이라 아무도 없다.' : '지금은 아무도 없다.' })), `place_${id}`, placeBg(id)),
     rest.length ? h('div', { className: 'place-more row wrap' }, rest.map((who) => h('button', { className: 'more-face', 'aria-label': knows(s, who) ? nameOf(who) : '처음 보는 얼굴', on: { click: () => ctx.go('person', { id: who, here: true }) } }, face(who, s)))) : null,
+    id === 'home' && parentsCar(s) ? h('div', { className: 'home-car' }, h('span', { className: 'home-car-ico', 'aria-hidden': 'true', text: '🚗' }), h('span', {}, h('small', { text: '집 앞 주차장' }), h('b', { text: `아버지의 ${parentsCar(s).name}` })), h('em', { className: 'num', text: `${parentsCar(s).year}년에 사 드림` })) : null,
     id === 'home' && s.partner?.자녀?.length ? h('div', { className: 'place-more row wrap' }, s.partner.자녀.map((c) => h('button', { className: 'btn', text: c.이름, on: { click: () => ctx.go('family') } }))) : null,
     stories.length ? h('section', { className: 'stack' }, h('h2', { text: '이번 달 이야기' }),
       stories.map((t) => h('button', { className: `tale ${t.first ? '' : 'later'}`.trim(), on: { click: () => openStory(ctx, t) } },

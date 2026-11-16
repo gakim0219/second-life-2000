@@ -1,5 +1,5 @@
 // 학교 달력, 학기별 공부, 시험과 성적, 인지도 단계. 달력은 design/00_학교달력_조사.md 확정값을 달 단위로 쓴다.
-import { stageOf, tierOf, labelOf } from './rules.js';
+import { stageOf, labelOf } from './rules.js';
 
 // ───────── 방학 ─────────
 // 달 단위 게임이라 한 달의 절반 넘게 쉬는 달만 방학 달로 친다. 표시용 날짜는 그대로 보여 준다.
@@ -63,11 +63,13 @@ function isTermStart(s) {
 }
 // 등록금은 실제 개강 달에 낸다.
 const isTuitionMonth = (s) => (isMit(s) ? [2, 9] : [3, 9]).includes(s.month);
-// 지능 구간이 높을수록 빨리 오른다. 서울대·MIT는 폭이 조금 작다.
-const STUDY_RATE = [6, 7, 8, 9, 10, 11, 12];
+// 지능이 높을수록 빨리 오른다(사용자 지시 2026-11-16): 60에서 1배, 120에서 1.5배, 200에서 2배. 사이는 고르게 잇는다.
+// 회귀한 어른 머리라 초등 과정은 2배, 중학 과정은 1.5배로 쉽다. 고등부터는 그대로다. 서울대·MIT는 폭이 조금 작다.
+const STUDY_BASE = 6, STAGE_EASE = { 초등: 2, 중학: 1.5 };
+const iqRate = (v) => (v <= 60 ? 1 : v <= 120 ? 1 + (v - 60) / 120 : Math.min(2, 1.5 + (v - 120) / 160));
 export function studyGain(s) {
   const st = stageOf(s);
-  let g = STUDY_RATE[tierOf(s.stats.지능) - 1];
+  let g = STUDY_BASE * iqRate(s.stats.지능) * (STAGE_EASE[st] ?? 1);
   if (st === '대학' && ['서울대', 'MIT'].includes(s.school?.대학)) g *= 0.8;
   if (st === '대학' && s.flags?.['수강:많이']) g *= 1.2;
   if (st === '대학' && s.flags?.['수강:적게']) g *= 0.8;

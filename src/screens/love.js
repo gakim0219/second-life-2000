@@ -293,13 +293,14 @@ function crushRun(ctx, r, id, name, title) {
   teenMoment(ctx, id, name, r.title ?? title, r.text);
   ctx.refresh();
 }
-function crushCard(ctx, p) {
+function crushCard(ctx, p, bare = false) {
   const s = ctx.s;
   const acts = crush.actKeys(s).map((k) => ({ k, label: crush.actLabel(s, k), ...crush.canAct(s, p.id, k) })).filter((a) => !(a.k === 'gift' && /특별한 날/.test(a.why ?? '')));
   const cf = crush.canConfess(s, p.id);
   const info = p.info ?? {};
   return h('section', { className: 'panel stack lv-teen' },
-    h('div', { className: 'row' }, teenAv(p.id, p.이름, 'big'), h('div', { className: 'lv-grow' },
+    bare ? h('div', { className: 'row lv-chips' }, h('span', { className: 'lv-tag', text: p.단계 }), p.first ? h('span', { className: 'lv-tag first', text: '첫 번째 인생의 그 아이' }) : null) : null,
+    bare ? null : h('div', { className: 'row' }, teenAv(p.id, p.이름, 'big'), h('div', { className: 'lv-grow' },
       h('div', { className: 'row lv-chips' }, h('span', { className: 'lv-tag', text: p.단계 }), p.first ? h('span', { className: 'lv-tag first', text: '첫 번째 인생의 그 아이' }) : null),
       h('h2', { text: p.이름 }), h('p', { className: 'small', text: info.소개?.includes(p.학교 ?? '') ? info.소개 : [p.학교, info.소개 ?? p.길].filter(Boolean).join(' · ') }))),
     info.성격 ? h('p', { className: 'small', text: info.성격 }) : null,
@@ -308,6 +309,15 @@ function crushCard(ctx, p) {
       h('b', { text: a.label }), h('span', { className: 'chip num', text: a.ok ? (a.cost ? `${won(a.cost)} · 1칸` : '1칸') : '' }), a.ok ? null : lock(a.why)))),
     h('button', { type: 'button', className: `btn ${cf.ok ? 'main' : ''}`, disabled: !cf.ok, on: { click: () => confirmSheet(ctx, `${p.이름}에게 고백한다`, cf.good ? '특별한 날이라 용기가 난다. 거절당하면 한동안 어색해진다.' : '거절당하면 한동안 어색해진다. 축제나 기념일에는 조금 더 용기가 난다.', '고백한다', () => crushRun(ctx, crush.confess(s, p.id), p.id, p.이름, '고백')) } },
       h('b', { text: '고백하기' }), cf.ok ? h('span', { className: 'chip', text: '1칸' }) : lock(cf.why)));
+}
+// 사람 시트에 넣는 조각(사용자 지시 2026-11-16). 사귀기 전의 마음 쌓기와 고백은 그 사람 화면에서 한다. 사귀면 풋풋한 마음으로 넘어간다.
+export function crushSection(ctx, id) {
+  const s = ctx.s; if (!crush.isTeenStage(s)) return null;
+  ensureCss(); crush.init(s);
+  const d = crush.panel(s);
+  if (d.partner?.id === id) return h('button', { type: 'button', className: 'btn rose', on: { click: () => ctx.go('crush') } }, '풋풋한 마음으로', h('span', { className: 'chip', text: '사귀는 사이' }));
+  const p = d.people.find((x) => x.id === id);
+  return p ? crushCard(ctx, p, true) : null;
 }
 function teenPartner(ctx, P) {
   const s = ctx.s;
@@ -332,11 +342,10 @@ function crushScreen(ctx) {
     h('div', { className: 'row between lv-status' }, slots(s), h('span', { className: 'small num lv-dim', text: `용돈 ${won(s.cash)}` })),
     !d.open ? h('section', { className: 'panel' }, h('p', { text: ['초등', '중학'].includes(stageOf(s)) ? '고등학교에 가면 열린다. 지금은 친구들과 노는 게 제일 좋다.' : '학생 때 이야기는 추억으로 남았다. 동창회에서 다시 만날지도 모른다.' })) : null,
     d.partner ? teenPartner(ctx, d.partner) : null,
-    d.open && !d.people.length && !d.partner ? h('section', { className: 'panel stack' }, h('p', { text: '아직 마음이 쓰이는 아이가 없다.' }),
-      h('p', { className: 'small', text: `학교생활을 하다 보면 눈에 들어오는 아이가 생긴다. ${d.other ?? '다른 학교'} 축제, 연합 동아리, 학원에서 다른 학교 아이를 만날 수도 있다.` }),
-      d.other ? h('button', { type: 'button', className: 'btn', text: `${d.other}에 가 보기`, on: { click: () => ctx.go('place', { id: 'other' }) } }) : null) : null,
-    d.people.length ? h('section', { className: 'stack' }, h('h3', { text: d.partner ? '알고 지내는 아이들' : '마음이 쓰이는 아이' }), d.people.map((p) => crushCard(ctx, p))) : null,
-    d.open && d.other && (d.people.length || d.partner) ? h('button', { type: 'button', className: 'btn', text: `${d.other}에 가 보기 (축제·연합 동아리·학원)`, on: { click: () => ctx.go('place', { id: 'other' }) } }) : null,
+    d.open && !d.partner ? h('section', { className: 'panel stack' }, h('p', { text: '아직 사귀는 사람이 없다.' }),
+      h('p', { className: 'small', text: d.people.length ? '사람들에서 그 아이를 열어 마음을 쌓고 고백한다. 받아 주면 여기에 보인다.' : `학교생활을 하다 보면 눈에 들어오는 아이가 생긴다. ${d.other ?? '다른 학교'} 축제, 연합 동아리, 학원에서 다른 학교 아이를 만날 수도 있다. 만난 아이는 사람들에 보인다.` }),
+      d.people.length ? h('button', { type: 'button', className: 'btn', text: '사람들 보기', on: { click: () => ctx.go('people') } }) : null,
+      d.other ? h('button', { type: 'button', className: 'btn', text: `${d.other}에 가 보기 (축제·연합 동아리·학원)`, on: { click: () => ctx.go('place', { id: 'other' }) } }) : null) : null,
     d.memories.length ? h('section', { className: 'stack' }, h('h3', { text: '추억' }), d.memories.map((m) => h('div', { className: 'lv-pick' }, teenAv(m.id, m.이름), h('span', { className: 'lv-grow' }, h('b', { text: m.이름 }), h('span', { className: 'small lv-dim lv-block', text: [m.학교, END[m.end] ?? '', m.hand ? '처음 잡은 손' : ''].filter(Boolean).join(' · ') }))))) : null);
 }
 

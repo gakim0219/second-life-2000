@@ -129,7 +129,7 @@ export function doKaraoke(s, score = null) {
 // ───────── 다른 학교: 축제·연합 동아리·학원 ─────────
 const otherName = (s) => crush.otherSchool(s) ?? '다른 학교';
 const inClub = (s) => Object.keys(CA).some((k) => s.flags[k]) || !!s.flags.hs_club;
-const meetText = (s, route, rate, none) => { if (crush.roll(s, `${route}${s.used}`) >= rate) return none; const id = crush.meetNear(s, route); return id ? `${crush.firstSceneOf(id)} 풋풋한 마음에 ${crush.nameOf(id)}이(가) 생겼다.` : none; };
+const meetText = (s, route, rate, none) => { if (crush.roll(s, `${route}${s.used}`) >= rate) return none; const id = crush.meetNear(s, route); return id ? `${crush.firstSceneOf(id)} 사람들에 ${crush.nameOf(id)}이(가) 생겼다.` : none; };
 const OTHER = [
   { id: 'other_fest', group: '다른 학교', label: '축제 놀러 가기', cost: 3000, stress: -5, show: (s) => isOpen('다른 학교', stageOf(s)),
     req: (s) => (![9, 10].includes(s.month) ? LOCK('이웃 학교 축제는 가을(9~10월)에 열립니다.') : s.flags[`fest_go_${s.year}`] ? LOCK('올해 축제는 이미 다녀왔습니다.') : null),

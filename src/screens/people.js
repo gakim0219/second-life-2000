@@ -15,6 +15,8 @@ import { albumOf, milestonesOf } from '../events.js';
 import { newsScrap, visibleHints, pastMemories } from '../paper.js';
 import { regressionNote, noteYears, halfNote, HALF_FROM, DISCLAIMER } from '../invest.js';
 import { kinCard } from './common.js';
+import { crushSection } from './love.js';
+import { meet as crushMeet } from '../crush.js';
 import { groups as actionGroups } from '../activities.js';
 import { icon } from './icons.js';
 import { isAdmin } from '../admin.js';
@@ -134,6 +136,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
   // 결과 글은 알림으로 띄운다(사용자 지시 2026-11-12: 사진과 버튼 사이에 칸이 생겨 버튼이 밀리지 않게).
   const act = (r) => {
     if (!r.ok) { ctx.toast(r.why); return; }
+    if (isPeer(id) && ROSTER[s.school?.[stageOf(s)]]?.[id] !== undefined) crushMeet(s, id, '같은 반');
     const opened = learnedNow(s, id, before) ?? profileLearned(s, id, beforeP);
     ctx.toast(opened ? `${r.text} ${opened}` : r.text);
     ctx.refresh();
@@ -161,6 +164,7 @@ function renderPerson(ctx, { id, here = false } = {}) {
     actions.push(h('button', { className: 'btn leaf', on: { click: () => act(greet(s, id)) } }, '먼저 말 걸기', h('span', { className: 'chip', text: '칸을 쓰지 않음' })));
   }
   if (loved) actions.push(h('button', { className: 'btn rose', on: { click: () => ctx.go('love', { id }) } }, '만남 화면으로'));
+  if (known && isPeer(id)) { const c = crushSection(ctx, id); if (c) actions.push(c); }
   // 멀리 있거나 동네에 안 보여도 연락 창으로는 닿는다.
   if (known && mz.contactable(s, id)) actions.push(h('button', { className: 'btn sky', on: { click: () => ctx.go('messenger', { id }) } }, '연락하기', h('span', { className: 'chip', text: `이번 달 남은 연락 ${mz.left(s)}/${mz.LIMIT}` })));
   if (here) for (const f of friendHelps(s).filter((x) => x.id === id)) actions.push(helpBtn(ctx, f));

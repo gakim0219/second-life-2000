@@ -203,10 +203,10 @@ const homeList = (s) => [...homeBgs(s), SEASON_FILE[seasonOf(s.month)], 'home', 
 const workList = (s) => (stageOf(s) === '사회인' ? ['office1', 'wk-office'] : s.flags?.부모_찻집 ? ['tea-inside', 'tea-open', 'store'] : ['store']);
 const hallList = (p) => ['stage', ROOM.office[p]];
 // 키 -> 파일 후보 표. 키는 화면이 부르는 이름(지도, place_<id>, scene_<id>, 회사 사무실, 옛 장소 이름)이다.
-// 고등학교마다 다른 교내 지도(사용자 지시 2026-11-16). 서울고는 map-high를 그대로 쓴다.
-const HI_MAP = { 느티여고: 'map-high-girls', 서울과학고: 'map-high-science', 새길직업고: 'map-high-voc' };
+// 고등학교마다 다른 교내 지도(사용자 지시 2026-11-16). 한빛고는 map-high를 그대로 쓴다.
+const HI_MAP = { 푸른여고: 'map-high-girls', 한빛과학고: 'map-high-science', 새길특성화고: 'map-high-voc' };
 // 교실·도서관 같은 고등학교 안 그림도 학교마다 다르다. hi-classroom → hi-classroom-girls. 없으면 원래 그림.
-const HI_SFX = { 느티여고: 'girls', 서울과학고: 'science', 새길직업고: 'voc' };
+const HI_SFX = { 푸른여고: 'girls', 한빛과학고: 'science', 새길특성화고: 'voc' };
 const UN_MAP = { MIT: 'map-university-mit', 한빛대: 'map-university-hanbit', 새길실무대: 'map-university-saegil' };
 setBgAlias((k) => { const s = appCtx.s, sfx = s && stageOf(s) === '고등' ? HI_SFX[s.school?.고등] : null; return sfx && k.startsWith('hi-') ? [`${k}-${sfx}`, k] : [k]; });
 // 동네 지도. 가족이 아파트로 옮겼으면 집 자리가 아파트인 그림을 먼저 찾는다(사용자 지시 2026-11-16).
@@ -217,7 +217,7 @@ function townMaps(s, seoulNext) {
 function bgListFor(s, key) {
   const p = s ? PRE[stageOf(s)] : 'el';
   const hiMap = HI_MAP[s?.school?.고등], unMap = UN_MAP[s?.school?.대학];
-  const seoulNext = s && otherSchool(s) === '서울고'; // 이웃 학교가 서울고일 때(여학생)
+  const seoulNext = s && otherSchool(s) === '한빛고'; // 이웃 학교가 한빛고일 때(여학생)
   const fixed = {
     map_town: townMaps(s, seoulNext), map_seoul: ['map-seoul'], map_e: ['map-elementary'], map_m: ['map-middle'], map_h: hiMap ? [hiMap, 'map-high'] : ['map-high'], map_u: unMap ? [unMap, 'map-university'] : ['map-university'],
     office1: ['wk-office'], office2: ['wk-office'], office3: ['wk-office', 'un-club'],

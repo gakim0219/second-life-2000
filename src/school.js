@@ -228,7 +228,7 @@ function rivalOf(s) {
   const st = stageOf(s);
   if (st === '초등') return RIVAL.초6;
   if (st === '중학') return RIVAL.중2;
-  if (st === '고등') return Object.values(s.school).includes('서울과학고') ? RIVAL.고2과학고 : RIVAL.고2;
+  if (st === '고등') return Object.values(s.school).includes('한빛과학고') ? RIVAL.고2과학고 : RIVAL.고2;
   return RIVAL.대학;
 }
 export const fameTotal = (s) => (s.fame ?? 0) + (s.pair?.fame ?? 0);

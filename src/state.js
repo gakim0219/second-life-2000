@@ -16,7 +16,7 @@ export function newGame({ name = '주인공', sex = '남', seed = 1 } = {}) {
     v: VERSION, name, sex, seed, year: 2000, month: 1,
     stats, stress: 10, cash: 30000, used: 0, capacity: capacityOf(stats.체력),
     graduateYear: sex === '남' ? 2014 : 2012,
-    study: 0, fame: 0, school: { 초등: '느티초', 중학: '서일중' },
+    study: 0, fame: 0, school: { 초등: '한솔초', 중학: '청솔중' },
     flags: {}, seen: [], bonds: { 부모님: 75, 미영: 60 }, log: [], queue: [], portfolio: {}, company: null, partner: null, ended: null,
     ...extras(),
   };
@@ -41,7 +41,8 @@ function purgeGone(v) {
 }
 export function serialize(s) { return JSON.stringify(s); }
 // 학교 이름이 바뀌었다. 옛 저장의 이름을 새 이름으로 옮긴다.
-const RENAMED = [['한빛중', '서일중']];
+// 2026-11-16: 학교 이름 바꿈(사용자 지시). 긴 이름부터 바꾼다.
+const RENAMED = [['한빛중', '청솔중'], ['서일중', '청솔중'], ['서울과학고', '한빛과학고'], ['새길직업고', '새길특성화고'], ['느티여고', '푸른여고'], ['세화여고', '매화여고'], ['서울고', '한빛고'], ['느티초', '한솔초']];
 export function deserialize(t) {
   for (const [a, b] of RENAMED) if (t.includes(a)) t = t.replaceAll(a, b);
   const s = JSON.parse(t);

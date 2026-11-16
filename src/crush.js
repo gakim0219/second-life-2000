@@ -41,30 +41,30 @@ export function infoOf(id) {
 }
 // 어느 학교에서 만나는가. 다른 학교 사람은 축제·연합 동아리·학원·소개로만 만난다.
 export const POOL = {
-  서울고: ['c07', 'c09', 'c11', 'c14', 'c34', 'c35', 'c36', 'c37', 'c111', 'c112'],
-  느티여고: ['c02', 'c04', 'c10', 'c15', 'c38', 'c39', 'c40', 'c41', 'c106', 'c107', 'c109'],
-  세화여고: ['c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c108', 'c110'],
-  서울과학고: ['c16', 'c17', 'c18', 'c19', 'c42', 'c43', 'c44', 'c119'],
-  새길직업고: ['c01', 'c06', 'c20', 'c21', 'c23', 'c24', 'c120'],
+  한빛고: ['c07', 'c09', 'c11', 'c14', 'c34', 'c35', 'c36', 'c37', 'c111', 'c112'],
+  푸른여고: ['c02', 'c04', 'c10', 'c15', 'c38', 'c39', 'c40', 'c41', 'c106', 'c107', 'c109'],
+  매화여고: ['c113', 'c114', 'c115', 'c116', 'c117', 'c118', 'c108', 'c110'],
+  한빛과학고: ['c16', 'c17', 'c18', 'c19', 'c42', 'c43', 'c44', 'c119'],
+  새길특성화고: ['c01', 'c06', 'c20', 'c21', 'c23', 'c24', 'c120'],
 };
 // 그 학교에 있는 기간(전학·졸업). 없으면 그 시기 내내.
-const WINDOW = { 'c35@서울고': 200702, 'c18@서울과학고': 200702, 'c10@느티여고': 200702 };
+const WINDOW = { 'c35@한빛고': 200702, 'c18@한빛과학고': 200702, 'c10@푸른여고': 200702 };
 const schoolOf = (id) => NEW.get(id)?.teen.학교 ?? null;
 
 export const isTeenStage = (s) => stageOf(s) === '고등';
 export const ownSchool = (s) => s.school?.[stageOf(s)] ?? null;
-// 지도에 표시하는 다른 학교. 여고는 남학생일 때만, 여학생이면 서울고가 그 자리다.
+// 지도에 표시하는 다른 학교. 여고는 남학생일 때만, 여학생이면 한빛고가 그 자리다.
 export function otherSchool(s) {
   const st = stageOf(s);
   if (st !== '고등') return null;
-  if (s.sex === '여') return ownSchool(s) === '서울고' ? '세화여고' : '서울고';
-  return '세화여고';
+  if (s.sex === '여') return ownSchool(s) === '한빛고' ? '매화여고' : '한빛고';
+  return '매화여고';
 }
 // 연합 동아리·축제로 닿는 학교들(지도의 다른 학교 + 이웃 학교).
 function nearSchools(s) {
   const st = stageOf(s), own = ownSchool(s);
   if (st !== '고등') return [];
-  const list = s.sex === '여' ? ['서울고'] : ['세화여고', '느티여고'];
+  const list = s.sex === '여' ? ['한빛고'] : ['매화여고', '푸른여고'];
   return list.filter((x) => x !== own);
 }
 const ageGapOK = (s, id) => Math.abs((infoOf(id)?.출생연도 ?? 0) - (s.birthYear ?? 1989)) <= 1;

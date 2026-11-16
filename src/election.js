@@ -6,12 +6,12 @@ import { fameTotal, RIVAL } from './school.js';
 const ym = (s) => s.year * 100 + s.month;
 const FRIEND_FRONT = 2, SECOND_RATE = 0.75; // 친구를 앞세운 값, 두 번째 상대 조는 첫 상대 조보다 약하다.
 const HS_NAMES = {
-  서울고: [['강태오', '차준영'], ['서지훈', '백승민']],
-  느티여고: [['윤다경', '장하늘'], ['임수아', '황서영']],
-  서울과학고: [['한도윤', '류지안'], ['문채영', '안소율']],
-  새길직업고: [['최민서', '하승우'], ['고은결', '유다인']],
+  한빛고: [['강태오', '차준영'], ['서지훈', '백승민']],
+  푸른여고: [['윤다경', '장하늘'], ['임수아', '황서영']],
+  한빛과학고: [['한도윤', '류지안'], ['문채영', '안소율']],
+  새길특성화고: [['최민서', '하승우'], ['고은결', '유다인']],
 };
-const hsNames = (s) => HS_NAMES[s.school?.고등] ?? HS_NAMES.새길직업고;
+const hsNames = (s) => HS_NAMES[s.school?.고등] ?? HS_NAMES.새길특성화고;
 const univNames = (s) => {
   if (s.school?.대학 === 'MIT') return [['Daniel Park', 'Priya Shah'], ['Sarah Lin', 'Tom Reed']];
   const head = s.sex === '여' && s.pair?.name !== '문혜원' ? '문혜원' : '이건우'; // 문혜원이 내 짝이면 상대 조에 두지 않는다
@@ -20,7 +20,7 @@ const univNames = (s) => {
 export const RACES = {
   초6: { run: 'el_run', vice: 'el_vice', from: 200103, voteYm: 200105, done: ['초6당선', '초6부회장', '초6낙선'], top: () => RIVAL.초6, names: () => [['표지환', '남도현'], ['권나윤', '송민재']] },
   중2: { run: 'me_run', vice: 'me_vice', from: 200303, voteYm: 200305, done: ['중2당선', '중2부회장', '중2낙선'], top: () => RIVAL.중2, names: () => [['홍석규', '배유진'], ['조현서', '오지호']] },
-  고2: { run: 'hs_run', vice: 'hs_vice', from: 200603, voteYm: 200605, done: ['hs_won', 'hs_vice_won', 'hs_lost'], top: (s) => (Object.values(s.school ?? {}).includes('서울과학고') ? RIVAL.고2과학고 : RIVAL.고2), names: hsNames },
+  고2: { run: 'hs_run', vice: 'hs_vice', from: 200603, voteYm: 200605, done: ['hs_won', 'hs_vice_won', 'hs_lost'], top: (s) => (Object.values(s.school ?? {}).includes('한빛과학고') ? RIVAL.고2과학고 : RIVAL.고2), names: hsNames },
   대학: { run: '출마', vice: '부출마', done: ['당선', '부당선', '낙선'], top: () => RIVAL.대학, names: univNames },
 };
 const undecided = (s, r) => !!s.flags[r.run] && !r.done.some((f) => s.flags[f]) && (r.from == null || ym(s) >= r.from);
@@ -39,7 +39,7 @@ export function scoreOf(s, key = raceKeyOf(s)) {
 }
 // 옛 저장의 짝은 이름 없이 id만 있다. 혼자 등록한 옛 저장은 소개받은 친구와 나간 것으로 보여 준다.
 const PAIR_NAME = { c01: '정민혁', c04: '김혜린', c06: '이소영', c11: '임재민', c14: '노현우', c17: '엄주희', c20: '조대호', c21: '양미래', c26: '탁경민', c34: '남궁찬', c38: '마수정', c40: '오세라', c44: '국은채', c59: '문혜원', c82: 'Marcus' };
-const MATE = { 초6: () => '배지호', 중2: () => '곽민서', 고2: (s) => ({ 서울고: '유재원', 느티여고: '신아름', 서울과학고: '정하민' }[s.school?.고등] ?? '나유찬'), 대학: (s) => (s.school?.대학 === 'MIT' ? 'Alex Kim' : '고승현') };
+const MATE = { 초6: () => '배지호', 중2: () => '곽민서', 고2: (s) => ({ 한빛고: '유재원', 푸른여고: '신아름', 한빛과학고: '정하민' }[s.school?.고등] ?? '나유찬'), 대학: (s) => (s.school?.대학 === 'MIT' ? 'Alex Kim' : '고승현') };
 const OLD_GENERIC = ['반 친구', '과 동기'];
 function mateName(s, key) {
   const n = s.pair?.name;
